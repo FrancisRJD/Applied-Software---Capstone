@@ -92,4 +92,5 @@
 
 ## Git Cmd Notes To Self
 git status - Shows what files are being added, removed, or modified. Doublecheck using this to ensure "Bin", "Obj", "Log", "Build" and other generated non-critical files/folders aren't getting pushed up to the repo!!!
+
 git rm --cached fileExample.txt - Removes a file from the git repo WITHOUT deleting it from your system. (NOTE that you can actually delete things off the github repo directly by just clicking on the file and going to the "more actions" triple-dot menu button in the top right. Just noting this down just incase.)
