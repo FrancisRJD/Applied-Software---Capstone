@@ -6,6 +6,8 @@
 - Add new features not currently included in the OG project
 - Determine whether user authorization should be verified in View or strictly in Domain
 	- Should User.HasClaim() and related calls be moved to Domain?
+- Figure out if the JS black magic Nick added in wwwroot will work with our architectural standards/new features
+	- Likely fine? Seems perfectly in line with view responsibilities (Shapes player registration data, doesn't apply business rules). Nothing seems to jump out at me as a potential issue.
 
 ### VIEW
 - Implement Tournament creation, editting, and view (ADMIN ONLY)
@@ -52,7 +54,7 @@
 - Auth Controller Refactor (Separate from above controller refactors as this is non-critical, but needed eventually)
 
 ### PERSISTENCE
-- Update database (And especially the rebuild DB SQL file!) to follow structure
+- Update database to follow structure. Make new tables for this instead of altering/updating existing ones so code can gradually migrate to new tables. Make new rebuild DB sql file for this aswell!
 	- Player
 		- Id - Int
 		- TeamId - Int, Foreign Key (Team)
@@ -90,3 +92,4 @@
 
 ## Git Cmd Notes To Self
 git status - Shows what files are being added, removed, or modified. Doublecheck using this to ensure "Bin", "Obj", "Log", "Build" and other generated non-critical files/folders aren't getting pushed up to the repo!!!
+git rm --cached fileExample.txt - Removes a file from the git repo WITHOUT deleting it from your system. (NOTE that you can actually delete things off the github repo directly by just clicking on the file and going to the "more actions" triple-dot menu button in the top right. Just noting this down just incase.)
