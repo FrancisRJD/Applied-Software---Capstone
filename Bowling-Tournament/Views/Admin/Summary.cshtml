@@ -1,0 +1,28 @@
+﻿@using bowling_tournament_MVCPRoject.ViewModels
+@model IEnumerable<SummaryVM>
+
+<div class="text-center justify-content-center row">
+    <h3 class="align-middle">Summary Page</h3>
+    <a class="btn-primary btn" asp-controller="Admin" asp-action="TeamListAdmin">Admin Team Management</a>
+    <table class="table table-responsive">
+        <thead>
+            <tr>
+                <th>Division</th>
+                <th>Teams</th>
+                <th>Paying Teams</th>
+                <th>Total Fees</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(SummaryVM division in Model)
+            {
+                <tr>
+                    <td>@division.DivisionName</td>
+                    <td>@division.Teams</td>
+                    <td>@division.PayingTeams</td>
+                    <td>@division.TotalFees</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
