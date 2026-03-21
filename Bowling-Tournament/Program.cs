@@ -1,4 +1,4 @@
-using bowling_tournament_MVCPRoject.Models;
+using bowling_tournament_MVCPRoject.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace bowling_tournament_MVCPRoject
@@ -11,6 +11,15 @@ namespace bowling_tournament_MVCPRoject
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            //NEW ADDITION NECESSARY TO MAKE MVC WORK WITH OUR ARCHITECTURAL SETUP
+            //  (Basically tell ASPNet "Hey, our views aren't where you'll expect them. Try the new UI folder!")
+            builder.Services.Configure<Microsoft.AspNetCore.Mvc.Razor.RazorViewEngineOptions>(options =>
+            {
+                options.ViewLocationFormats.Clear();
+                options.ViewLocationFormats.Add("/Ui/Views/{1}/{0}.cshtml");
+                options.ViewLocationFormats.Add("/Ui/Views/Shared/{0}.cshtml");
+            });
 
             // Adding DB
             builder.Services.AddDbContext<BowlingDbContext>(options =>

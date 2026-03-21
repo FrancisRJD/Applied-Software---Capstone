@@ -1,0 +1,46 @@
+﻿@using bowling_tournament_MVCPRoject.Domain.Models
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Team;
+<div class="justify-content-center row">
+	<div class="col-10">
+		<div class="card">
+			<div class="card-header">
+				<h3>@Model.TeamName</h3>
+			</div>
+			<div class="card-body">
+				<ul class="list-unstyled">
+					<li>Division: @Model.Division.DivisionName</li>
+					<li>Paid: 
+						@if (Model.RegistrationPaid)
+						{
+							<input type="checkbox" checked disabled>
+						}
+						@if (!@Model.RegistrationPaid) {
+							<input type="checkbox" disabled>
+						}
+					</li>
+						<li>
+						<h4 class="pt-2">Players:</h4>
+						<ul class="list-group list-unstyled">
+							@foreach (var players in Model.Players)
+							{
+								<li>@players.PlayerName</li>
+							}
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="text-center">
+		<h3 class="pt-2">Are you sure you want to delete this team?</h3>
+		<form asp-action="DeleteTeamConfirmed" method="post">
+			<input type="hidden" name="id" value="@Model.TeamId" />
+			<button type="submit" class="w-25 btn btn-danger">Confirm Deletion</button>
+		</form>
+	</div>
+</div>

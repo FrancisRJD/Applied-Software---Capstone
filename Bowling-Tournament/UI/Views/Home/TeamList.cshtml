@@ -1,0 +1,35 @@
+﻿@using bowling_tournament_MVCPRoject.UI.ViewModels
+@model IEnumerable<TeamDisplayVM>
+
+<div class="text-center justify-content-center row">
+    <h3>The NBCC Bowling League</h3>
+    @if(User.Identity!=null && User.Identity.IsAuthenticated)
+    {
+        <p><a class="btn-primary btn" asp-controller="Admin" asp-action="TeamListAdmin">Admin Team Management</a></p>
+    }
+    <div>
+        @foreach (var division in Model.GroupBy(division => division.TeamDivision))
+        {
+            <h4 class="align-middle">@division.Key</h4>
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var team in Model.Where(t => t.TeamDivision == division.Key))
+                    {
+                        <tr>
+                            <td>@team.TeamName</td>
+                            <td>
+                                <a class="btn-primary btn" asp-action="Details" asp-route-id="@team.TeamId"><i class="bi bi-search"></i> View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
