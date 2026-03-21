@@ -22,7 +22,7 @@
 		- Non-admin view should display teams that have PAID status on database
 		- Admin view should display all teams and allow for editting (Admin presumed to be the ultimate arbiter of editting/removing stuff basically)
 - Alter Team List view to only show teams registered to the current selected tournament
-- Refactor controllers to be more reliant on result returns from domain for error display (Where needed)
+- Refactor controllers to be use result returns from the domain for certain error displays (Anything business rules-related. Unnecessary for "Required" checks and other data-shaping stuff though)
 - (Large chunk of the view has already been done by the MVC project so the grand bulk of the View work is in implementing the new views/altering existing views to account for the fact that we're dealing with *multiple* tournaments now)
 
 ### DOMAIN
@@ -92,4 +92,5 @@
 
 ## Git Cmd Notes To Self
 git status - Shows what files are being added, removed, or modified. Doublecheck using this to ensure "Bin", "Obj", "Log", "Build" and other generated non-critical files/folders aren't getting pushed up to the repo!!!
+
 git rm --cached fileExample.txt - Removes a file from the git repo WITHOUT deleting it from your system. (NOTE that you can actually delete things off the github repo directly by just clicking on the file and going to the "more actions" triple-dot menu button in the top right. Just noting this down just incase.)
