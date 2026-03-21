@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace bowling_tournament_MVCPRoject.Domain.Models
+namespace bowling_tournament_MVCPRoject.Domain.Entities
 {
     public class Division
     {

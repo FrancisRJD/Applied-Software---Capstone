@@ -1,4 +1,4 @@
-using bowling_tournament_MVCPRoject.Domain.Models;
+using bowling_tournament_MVCPRoject.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace bowling_tournament_MVCPRoject

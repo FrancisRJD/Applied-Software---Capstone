@@ -1,4 +1,4 @@
-﻿using bowling_tournament_MVCPRoject.Domain.Models;
+﻿using bowling_tournament_MVCPRoject.Domain.Entities;
 
 namespace bowling_tournament_MVCPRoject.UI.ViewModels
 {

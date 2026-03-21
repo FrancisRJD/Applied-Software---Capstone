@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using bowling_tournament_MVCPRoject.UI.ViewModels;
-using bowling_tournament_MVCPRoject.Domain.Models;
+using bowling_tournament_MVCPRoject.Domain.Entities;
+using bowling_tournament_MVCPRoject.Persistence;
 
 namespace bowling_tournament_MVCPRoject.UI.Controllers
 {

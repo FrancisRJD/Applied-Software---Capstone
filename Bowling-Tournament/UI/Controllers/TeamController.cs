@@ -1,4 +1,5 @@
-﻿using bowling_tournament_MVCPRoject.Domain.Models;
+﻿using bowling_tournament_MVCPRoject.Domain.Entities;
+using bowling_tournament_MVCPRoject.Persistence;
 using bowling_tournament_MVCPRoject.UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;

@@ -5,7 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using bowling_tournament_MVCPRoject.UI.ViewModels;
-using bowling_tournament_MVCPRoject.Domain.Models;
+using bowling_tournament_MVCPRoject.Domain.Entities;
+using bowling_tournament_MVCPRoject.Persistence;
 
 namespace bowling_tournament_MVCPRoject.UI.Controllers
 {

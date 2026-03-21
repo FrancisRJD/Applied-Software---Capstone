@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Folder Include="AppData\" />
+    <Folder Include="UI\ReadModels\" />
   </ItemGroup>
 
 </Project>

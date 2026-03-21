@@ -1,13 +1,15 @@
 ﻿using System.Numerics;
+using bowling_tournament_MVCPRoject.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace bowling_tournament_MVCPRoject.Domain.Models
+namespace bowling_tournament_MVCPRoject.Persistence
 {
     public class BowlingDbContext : DbContext
     {
         public BowlingDbContext(DbContextOptions<BowlingDbContext> options)
            : base(options)
         {
+
         }
 
         public DbSet<BowlingUser> BowlingUser => Set<BowlingUser>();
