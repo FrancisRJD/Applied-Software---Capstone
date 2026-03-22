@@ -13,9 +13,10 @@ namespace bowling_tournament_MVCPRoject.Domain.Daos
                 Save changes
          */
 
-        public Team findTeam(Team team); //Only uses teamId, other details ignored
-        public void addTeam (Team team);
-        public void removeTeam(Team team); //Only uses teamId, other details ignored
+        public TeamV2 findTeam(TeamV2 team); //Only uses teamId, other details ignored
+        public void addTeam (TeamV2 team);
+        public void editTeam (TeamV2 team);
+        public void removeTeam(TeamV2 team); //Only uses teamId, other details ignored
 
         public void saveChanges();
     }

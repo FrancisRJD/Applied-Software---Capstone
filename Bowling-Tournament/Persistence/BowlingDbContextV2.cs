@@ -14,7 +14,7 @@ namespace bowling_tournament_MVCPRoject.Persistence
 
         }
 
-        public DbSet<Player> Player => Set<Player>();
+        public DbSet<PlayerV2> Player => Set<PlayerV2>();
         public DbSet<Registration> Registration => Set<Registration>();
         public DbSet<TeamV2> Team => Set<TeamV2>();
         public DbSet<Tournament> Tournament => Set<Tournament>();
@@ -23,13 +23,13 @@ namespace bowling_tournament_MVCPRoject.Persistence
             //Overriding the default handling of this just to make absolutely sure that TeamV2 is properly
             //  mapping to the Team table
         {
-            modelBuilder.Entity<Player>().ToTable("Player").HasKey(x=>x.PlayerId);
+            modelBuilder.Entity<PlayerV2>().ToTable("Player").HasKey(x=>x.PlayerId);
             modelBuilder.Entity<Registration>().ToTable("Registration").HasKey(x => x.RegistrationId);
             modelBuilder.Entity<TeamV2>().ToTable("Team").HasKey(x => x.TeamId);
             modelBuilder.Entity<Tournament>().ToTable("Tournament").HasKey(x => x.TournamentId);
 
             //Unique ID safety assurance since *all* of these tables can have updates, creates, and deletes
-            modelBuilder.Entity<Player>()
+            modelBuilder.Entity<PlayerV2>()
                 .HasIndex(x => x.PlayerId)
                 .IsUnique();
             modelBuilder.Entity<Registration>()
