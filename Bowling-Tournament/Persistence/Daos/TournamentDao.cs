@@ -5,24 +5,33 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
 {
     public class TournamentDao : ITournamentDao
     {
+        private readonly BowlingDbContextV2 _db;
+
+        public TournamentDao(BowlingDbContextV2 db)
+        {
+            _db = db;
+        }
+
         public void addTournament(Tournament tournament)
         {
-            throw new NotImplementedException();
+            _db.Tournament.Add(tournament);
+            _db.SaveChanges();
         }
 
         public Tournament findTournament(Tournament tournament)
         {
-            throw new NotImplementedException();
+            return _db.Tournament.Find(tournament.TournamentId) ?? new Tournament();
         }
 
         public void removeTournament(Tournament tournament)
         {
-            throw new NotImplementedException();
+            _db.Tournament.Remove(tournament);
+            _db.SaveChanges();
         }
 
         public void saveChanges()
         {
-            throw new NotImplementedException();
+            _db.SaveChanges();
         }
     }
 }
