@@ -1,13 +1,33 @@
 # Project's .gitignore should now function THIS TIME and not be a complete mess! If uneditable files that shouldn't be pushed up to the repo are getting pushed, give me (Francis) a heads up so I can make sure it's ripped out of the repo and added to the .gitignore list!
 
 ## TODO
-### OVERARCHING
-- Refactor project so it follows current architectural rules (Everything resides in view, everything is tightly-coupled)
-- Add new features not currently included in the OG project
+### OVERARCHING (Arranged in importance)
+- Add new/updating old features(CRITICAL for Minimum Viable Product)
+	- Needs to be added
+		- View Tournaments
+			- Create button that leads to create tournament form
+			- List of tournaments showing tournament names, watcher capacity, team capacity, and how many teams have registered(And paid?)
+			- Edit button next to each listing to lead to editting tournament
+		- Create Tournament
+			- Simple tournament creation form. User enters in tournament name, date, location, team capacity, and watcher capacity.
+		- Edit Tournament
+			- Similar as above but updates pre-existing tournament based on hidden ID put into the form by tournament list view
+	- Needs to be adjusted
+		- Team Registration Page
+			- Needs work in view and domain to work off of new V2 database and related V2 entities(PlayerV2, TeamV2)
+			- Needs a new field to select which tournament the team is registering for
+			- Note from Francis: When generating a registration, you will first need to create the new team, followed by its players, and then add a new registration)
+		- Admin Team List
+			- Delete and Mark Paid needs to work with new V2 database (Mark paid will now update the new "Registration" table's status instead of the old "Team", as teams no longer have markings for whether they've paid or not)
+			- Needs to list teams from the new database and interact with that instead of the old one
+			- Teams should now display which tournament(s) they're registered to
+		- Team Details
+			- Should now list what tournament(s) the team has registered and paid for
 - Determine whether user authorization should be verified in View or strictly in Domain
 	- Should User.HasClaim() and related calls be moved to Domain?
 - Figure out if the JS black magic Nick added in wwwroot will work with our architectural standards/new features
 	- Likely fine? Seems perfectly in line with view responsibilities (Shapes player registration data, doesn't apply business rules). Nothing seems to jump out at me as a potential issue.
+- Refactor project so it follows current architectural rules (Everything resides in view, everything is tightly-coupled)
 
 ### VIEW
 - Implement Tournament creation, editting, and view (ADMIN ONLY)

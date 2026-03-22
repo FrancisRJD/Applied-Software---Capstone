@@ -25,6 +25,9 @@ namespace bowling_tournament_MVCPRoject
             builder.Services.AddDbContext<BowlingDbContext>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("bowling-tournament-db"))
             );
+            builder.Services.AddDbContext<BowlingDbContextV2>(options =>
+                options.UseSqlite(builder.Configuration.GetConnectionString("bowling-tournament-db-v2"))
+            );
 
             builder.Services.AddAuthentication("app-cookie")
             .AddCookie("app-cookie", options =>

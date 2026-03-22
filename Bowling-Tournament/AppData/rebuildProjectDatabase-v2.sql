@@ -1,5 +1,13 @@
 BEGIN TRANSACTION;
 
+/*
+	Restructured database with new tournaments and registration tables
+		Payments are set up to be on a per-registration instead of a per-team basis.
+		Not all teams have been registered with a tournament
+		Not all registrations have been paid
+		Only the OG tournament is marked as open to registrations
+*/
+
 DROP TABLE IF EXISTS Player;
 DROP TABLE IF EXISTS Registration;
 DROP TABLE IF EXISTS Team;
@@ -306,5 +314,49 @@ insert into Tournament values (1, 'The Original Bowling Tourney', '2026-08-30', 
 insert into Tournament values (2, 'Tournament of Power', '2015-07-05', 'Null Realm', 8, 2, 0);
 
 --Registration records
+insert into Registration values (1, 1, 1, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (2, 1, 3, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (3, 1, 4, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (4, 1, 5, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (5, 1, 6, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (6, 1, 7, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (7, 1, 8, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (8, 1, 9, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (9, 1, 10, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (10, 1, 11, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (11, 1, 12, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (12, 1, 13, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (13, 1, 14, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (14, 1, 15, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (15, 1, 16, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (16, 1, 17, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (17, 1, 18, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (18, 1, 19, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (19, 1, 20, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (20, 1, 21, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (21, 1, 22, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (22, 1, 23, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (23, 1, 24, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (24, 1, 25, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (25, 1, 26, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (26, 1, 29, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (27, 1, 30, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (28, 1, 31, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (29, 1, 32, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (30, 1, 33, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (31, 1, 34, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (32, 1, 35, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (33, 1, 36, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (34, 1, 37, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (35, 1, 38, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (36, 1, 39, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (37, 1, 40, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (38, 1, 41, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (39, 1, 42, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (40, 1, 43, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (41, 1, 44, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (42, 1, 45, '2025-10-12', 1, '2025-10-25');
+insert into Registration values (43, 1, 46, '2025-10-12', 0, '2025-10-25');
+insert into Registration values (44, 1, 47, '2025-10-12', 0, '2025-10-25');
 
 COMMIT;
