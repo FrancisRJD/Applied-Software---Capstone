@@ -40,5 +40,22 @@ namespace bowling_tournament_MVCPRoject.Persistence.Queries
                  }
                 ).ToListAsync();
         }
+
+        public async Task<TournamentListItem?> GetByIdAsync(int id)
+        {
+            return await _db.Tournament
+                .Where(t => t.TournamentId == id)
+                .Select(t => new TournamentListItem
+                {
+                    id = t.TournamentId,
+                    tournamentName = t.TournamentName,
+                    tournamentDate = t.TournamentDate,
+                    location = t.Location,
+                    teamCapacity = t.TeamCapacity,
+                    watcherCapacity = t.WatcherCapacity,
+                    registrationOpen = t.RegistrationOpen
+                })
+                .FirstOrDefaultAsync();
+        }
     }
 }

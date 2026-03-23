@@ -1,5 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using bowling_tournament_MVCPRoject.UI.ReadModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
 
 namespace bowling_tournament_MVCPRoject.UI.ViewModels
 {
@@ -9,7 +10,7 @@ namespace bowling_tournament_MVCPRoject.UI.ViewModels
 
         [Required]
         [StringLength(100)]
-        public string TeamName { get; set; }
+        public string? TeamName { get; set; }
 
         [Required]
         public int DivisionId { get; set; }
@@ -18,9 +19,10 @@ namespace bowling_tournament_MVCPRoject.UI.ViewModels
 
         public DateTime? PaymentDate { get; set; }
 
-        public IEnumerable<SelectListItem> DivisionOptions { get; set; }
+        public IEnumerable<SelectListItem>? DivisionOptions { get; set; }
 
         public List<PlayerEditVm> NewPlayers { get; set; } = new();
+        public List<PlayerListItem> Players { get; set; } = new();
 
 
     }

@@ -42,7 +42,7 @@ CREATE TABLE Player (
 );
 
 -- BowlingUser records
-INSERT into BowlingUser values (1, 'smonk', 'AQAAAAIAAYagAAAAEIqCPZxk8RTs3R6K/dYZAWlDgCr83d3U3MDums/YuZEQl/gXqc+e7AsNVHp3jMBtOg==', 1);
+INSERT into BowlingUser values (1, 'smonk', '$pbkdf2-sha256$600000$l3FEMhVLEDitntVLQ/LRug==$BYW0817sL5Mh3gNwewh5EqsNscqvd6rFlSHFyL/WqZQ=', 1);
 
 -- Division records
 INSERT INTO Division VALUES (1, 'Men''s');

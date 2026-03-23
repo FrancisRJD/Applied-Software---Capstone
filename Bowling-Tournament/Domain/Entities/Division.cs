@@ -7,8 +7,8 @@ namespace bowling_tournament_MVCPRoject.Domain.Entities
         public int DivisionId { get; set; }
 
         [Required]
-        public string DivisionName { get; set; }
+        public string? DivisionName { get; set; }
 
-        public ICollection<Team> Teams { get; set; } = new List<Team>();
+        public ICollection<TeamV2> Teams { get; set; } = new List<TeamV2>();
     }
 }

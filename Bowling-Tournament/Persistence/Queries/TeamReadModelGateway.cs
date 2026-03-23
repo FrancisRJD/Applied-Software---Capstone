@@ -1,4 +1,5 @@
-﻿using bowling_tournament_MVCPRoject.UI.Queries;
+﻿using bowling_tournament_MVCPRoject.Domain.Entities;
+using bowling_tournament_MVCPRoject.UI.Queries;
 using bowling_tournament_MVCPRoject.UI.ReadModels;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,25 @@ namespace bowling_tournament_MVCPRoject.Persistence.Queries
                      teamDivision = t.TeamDivision
                  }
                 ).ToListAsync();
+        }
+
+        public async Task<List<TeamListItem>> GetAllWithStatusAsync()
+        {
+            return await
+                (from t in _db.Team
+                 join d in _db.Division on t.TeamDivision equals d.DivisionId
+                 join r in _db.Registration on t.TeamId equals r.TeamId into registrations
+                 from r in registrations.DefaultIfEmpty()
+                 select new TeamListItem
+                 {
+                     id = t.TeamId,
+                     teamName = t.TeamName,
+                     teamDivision = t.TeamDivision,
+                     divisionName = d.DivisionName,
+                     IsPaid = t.RegistrationPaid,
+                     DatePaid = t.PaymentDate
+                 })
+                .ToListAsync();
         }
 
         public async Task<List<TeamListItem>> GetAllInTournamentAsync(TournamentListItem tournament)

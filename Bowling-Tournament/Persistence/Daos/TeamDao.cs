@@ -32,6 +32,8 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
 
             teamFound.TeamName = team.TeamName;
             teamFound.TeamDivision = team.TeamDivision;
+            teamFound.RegistrationPaid = team.RegistrationPaid;
+            teamFound.PaymentDate = team.PaymentDate;
 
             _db.SaveChanges();
         }
@@ -48,6 +50,7 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
         public void removeTeam(TeamV2 team)
         {
             _db.Team.Remove(team);
+            _db.SaveChanges();
         }
 
         public void saveChanges()

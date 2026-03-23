@@ -15,7 +15,7 @@ namespace bowling_tournament_MVCPRoject.UI.ViewModels
         }
 
         [Required]
-        public string TeamName { get; set; }
+        public string? TeamName { get; set; }
 
         [Required]
         public int DivisionId { get; set; }
@@ -24,6 +24,6 @@ namespace bowling_tournament_MVCPRoject.UI.ViewModels
         [MaxLength(4)]
         public List<PlayerVm> Players { get; set; }
 
-        public IEnumerable<SelectListItem> DivisionOptions { get; set; }
+        public IEnumerable<SelectListItem>? DivisionOptions { get; set; }
     }
 }
