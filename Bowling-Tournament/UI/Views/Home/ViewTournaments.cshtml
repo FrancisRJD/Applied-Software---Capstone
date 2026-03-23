@@ -1,0 +1,38 @@
+﻿@model List<bowling_tournament_MVCPRoject.UI.ReadModels.TournamentListItem>
+
+@{
+    ViewData["Title"] = "Tournaments";
+}
+
+<div class="text-center justify-content-center row">
+    <h3>The NBCC Bowling League</h3>
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <p><a class="btn-primary btn" asp-controller="Admin" asp-action="EditTournament">Tournament Management</a></p>
+    }
+    <div>
+        @foreach (var td in Model.GroupBy(td => td.tournamentDate))
+        {
+            <h4 class="align-middle">@td.Key</h4>
+            <table class="table table-responsive">
+                <thead>
+                    <tr>
+                        <th>Tournament</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var tournament in Model.Where(t => t.tournamentDate == td.Key))
+                    {
+                        <tr>
+                            <td>@tournament.tournamentDate</td>
+                            <td>
+                                <a class="btn-primary btn" asp-action="TournamentDetails" asp-route-id="@tournament.id"><i class="bi bi-search"></i> View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
