@@ -1,5 +1,6 @@
 ﻿using bowling_tournament_MVCPRoject.Domain.Entities;
 using bowling_tournament_MVCPRoject.Persistence;
+using bowling_tournament_MVCPRoject.UI.Queries;
 using bowling_tournament_MVCPRoject.UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,10 +13,12 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
     public class TeamController : Controller
     {
         private readonly BowlingDbContext _db;
-        
-        public TeamController(BowlingDbContext db)
+        private readonly ITeamReadModelGateway _teamGateway;
+
+        public TeamController(BowlingDbContext db, ITeamReadModelGateway teamGateway)
         {
             _db = db;
+            _teamGateway = teamGateway;
         }
 
         private IEnumerable<SelectListItem> BuildDivisionOptions()
@@ -106,18 +109,10 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
             return View(teams);
         }
 
-        public IActionResult Detials(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var team = _db.Team
-                .Include(t => t.Division)
-                .Include(t => t.Players)
-                .FirstOrDefault(t => t.TeamId == id);
-
-            if (team == null)
-            {
-                return NotFound();
-            }
-
+            var team = await _teamGateway.GetByIdAsync(id);
+            if (team == null) return NotFound();
             return View(team);
         }
     }

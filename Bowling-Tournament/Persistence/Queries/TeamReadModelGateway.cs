@@ -1,5 +1,6 @@
 ﻿using bowling_tournament_MVCPRoject.UI.Queries;
 using bowling_tournament_MVCPRoject.UI.ReadModels;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace bowling_tournament_MVCPRoject.Persistence.Queries
@@ -13,14 +14,14 @@ namespace bowling_tournament_MVCPRoject.Persistence.Queries
         }
         public async Task<List<TeamListItem>> GetAllAsync()
         {
-            return await 
+            return await
                 (from t in _db.Team
-                select new TeamListItem
-                {
-                    id = t.TeamId,
-                    teamName = t.TeamName,
-                    teamDivision = t.TeamDivision
-                }
+                 select new TeamListItem
+                 {
+                     id = t.TeamId,
+                     teamName = t.TeamName,
+                     teamDivision = t.TeamDivision
+                 }
                 ).ToListAsync();
         }
 
@@ -43,18 +44,46 @@ namespace bowling_tournament_MVCPRoject.Persistence.Queries
         {
             return await
                 (from p in _db.Player
-                 join t in _db.Team on p.TeamId equals p.TeamId
                  where p.TeamId == team.id
                  select new PlayerListItem
                  {
-                     PlayerId = t.PlayerId,
-                     Name = t.Name,
-                     City = t.City,
-                     Province = t.Province,
-                     Email = t.Email,
-                     Phone = t.Phone
+                     PlayerId = p.PlayerId,
+                     Name = p.PlayerName,
+                     City = p.City,
+                     Province = p.Province,
+                     Email = p.Email,
+                     Phone = p.Phone
                  }
                  ).ToListAsync();
+        }
+
+        public async Task<TeamListItem?> GetByIdAsync(int id)
+        {
+            var team = await _db.Team
+                 .Where(t => t.TeamId == id)
+                 .Select(t => new TeamListItem
+                 {
+                     id = t.TeamId,
+                     teamName = t.TeamName,
+                     teamDivision = t.TeamDivision
+                 }
+                ).FirstOrDefaultAsync();
+
+            if (team == null) return null;
+
+            team.Players = await GetTeamPlayersAsync(team);
+            return team;
+        }
+
+        public async Task<List<SelectListItem>> GetDivisionOptionsAsync()
+        {
+            return await _db.Division
+                .OrderBy(d => d.DivisionName)
+                .Select(d => new SelectListItem
+                {
+                    Value = d.DivisionId.ToString(),
+                    Text = d.DivisionName
+                }).ToListAsync();
         }
     }
 }

@@ -1,0 +1,36 @@
+﻿@model bowling_tournament_MVCPRoject.UI.ReadModels.TournamentListItem
+
+@{
+    ViewData["Title"] = "Tournament Details";
+}
+
+<div class="justify-content-center row">
+    <div class="col-10">
+        <div class="card">
+            <div class="card-header">
+                <h3>@Model.tournamentName</h3>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled">
+                    <li>
+                        <h4 class="pt-2">Date: @Model.tournamentDate</h4>
+                    </li>
+                    <li>
+                        <h4 class="pt-2">Location: @Model.location</h4>
+                    </li>
+                    <li>
+                        <h4 class="pt-2">Team Capacity: @Model.teamCapacity</h4>
+                    </li>
+                    <li>
+                        <h4 class="pt-2">Audiance Capacity: @Model.watcherCapacity</h4>
+                    </li>
+                    <li>
+                        <h4 class="pt-2">Registration Open: @Model.registrationOpen</h4>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+</div>
