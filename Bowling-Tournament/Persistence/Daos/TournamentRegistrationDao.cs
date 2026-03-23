@@ -28,19 +28,21 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
                 .FirstOrDefault() ?? new Registration();
         }
 
-        public async Task<List<Registration>> getRegistrationsByTournament(int tournamentId)
-            //I realize more than likely unnecessary since this should be a readModel but bolting it here
+        public List<Registration> getRegistrationsByTournament(int tournamentId)
+        //I realize more than likely unnecessary since this should be a readModel but bolting it here
         {
-            return await _db.Registration
+            return _db.Registration
                 .Where(r => r.TournamentId == tournamentId)
-                .Select(tr => new Registration { 
+                .Select(tr => new Registration
+                {
                     RegistrationId = tr.RegistrationId,
                     TournamentId = tr.TournamentId,
                     TeamId = tr.TeamId,
                     RegisteredOn = tr.RegisteredOn,
                     Status = tr.Status,
                     StatusDate = tr.StatusDate
-                }).ToListAsync();
+                })
+                .ToList();
         }
 
         public void removeRegistration(Registration registration)
@@ -56,7 +58,18 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
 
         public void updateRegistration(Registration registration)
         {
-            throw new NotImplementedException();
+            var found = _db.Registration.FirstOrDefault(r => r.RegistrationId == registration.RegistrationId);
+
+            if (found == null)
+                return;
+
+            found.TournamentId = registration.TournamentId;
+            found.TeamId = registration.TeamId;
+            found.RegisteredOn = registration.RegisteredOn;
+            found.Status = registration.Status;
+            found.StatusDate = registration.StatusDate;
+
+            _db.SaveChanges();
         }
     }
 }

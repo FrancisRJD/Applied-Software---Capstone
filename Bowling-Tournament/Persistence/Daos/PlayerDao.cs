@@ -47,6 +47,14 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
                 .FirstOrDefault() ?? new PlayerV2();
         }
 
+        // For multiple
+        public List<PlayerV2> findPlayersByTeam(TeamV2 team)
+        {
+            return _db.Player
+                .Where(x => x.TeamId == team.TeamId)
+                .ToList();
+        }
+
         public void removePlayer(PlayerV2 player)
         {
             _db.Player.Remove(player);
