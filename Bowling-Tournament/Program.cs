@@ -1,5 +1,8 @@
 using bowling_tournament_MVCPRoject.Persistence;
 using Microsoft.EntityFrameworkCore;
+using bowling_tournament_MVCPRoject.Domain.Daos;
+using bowling_tournament_MVCPRoject.Domain.Services;
+using bowling_tournament_MVCPRoject.Persistence.Daos;
 
 namespace bowling_tournament_MVCPRoject
 {
@@ -28,6 +31,15 @@ namespace bowling_tournament_MVCPRoject
             builder.Services.AddDbContext<BowlingDbContextV2>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("bowling-tournament-db-v2"))
             );
+
+            // Requirments
+            builder.Services.AddScoped<ITeamDao, TeamDao>();
+            builder.Services.AddScoped<IPlayerDao, PlayerDao>();
+            builder.Services.AddScoped<ITournamentDao, TournamentDao>();
+            builder.Services.AddScoped<ITournamentRegistrationDao, TournamentRegistrationDao>();
+
+            builder.Services.AddScoped<ITeamManagerService, TeamManagerService>();
+            builder.Services.AddScoped<ITournamentService, TournamentService>();
 
             builder.Services.AddAuthentication("app-cookie")
             .AddCookie("app-cookie", options =>
