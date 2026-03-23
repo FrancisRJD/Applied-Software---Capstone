@@ -5,6 +5,10 @@
         public int id {  get; set; }
         public string? teamName { get; set; }
         public int teamDivision { get; set; }
+        public string? divisionName { get; set; }
+        public bool IsPaid { get; set; }
+        public DateTime? DatePaid { get; set; }
+
         public List<PlayerListItem> Players { get; set; } = new();
     }
 }

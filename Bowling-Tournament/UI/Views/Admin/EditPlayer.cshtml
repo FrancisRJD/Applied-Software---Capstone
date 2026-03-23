@@ -1,0 +1,41 @@
+﻿@model bowling_tournament_MVCPRoject.UI.ViewModels.PlayerEditVm
+@{
+    ViewData["Title"] = "Edit Player";
+}
+<div class="justify-content-center row">
+    <div class="col-6">
+        <h3 class="text-center pb-3">Edit Player</h3>
+        <form method="post" asp-action="EditPlayer">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="PlayerId" />
+            <input type="hidden" asp-for="TeamId" />
+            <div class="mb-3">
+                <label asp-for="PlayerName" class="form-label"></label>
+                <input asp-for="PlayerName" class="form-control" />
+                <span asp-validation-for="PlayerName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="City" class="form-label"></label>
+                <input asp-for="City" class="form-control" />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Province" class="form-label"></label>
+                <input asp-for="Province" class="form-control" />
+                <span asp-validation-for="Province" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Phone" class="form-label"></label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Save Changes</button>
+            <a asp-action="EditTeam" asp-route-id="@Model.TeamId" class="btn btn-secondary w-100 mt-2">Cancel</a>
+        </form>
+    </div>
+</div>

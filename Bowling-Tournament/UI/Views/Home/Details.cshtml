@@ -27,15 +27,16 @@
                             </thead>
 
                             <tbody>
-                                
+								@foreach (var player in Model.Players)
+                                {
                                     <tr>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
+                                        <td>@player.Name</td>
+                                        <td>@player.City</td>
+                                        <td>@player.Province</td>
+                                        <td>@player.Email</td>
+                                        <td>@player.Phone</td>
                                     </tr>
-                                
+                                }
                             </tbody>
                         </table>
 

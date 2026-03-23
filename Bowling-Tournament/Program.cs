@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using bowling_tournament_MVCPRoject.Domain.Daos;
 using bowling_tournament_MVCPRoject.Domain.Services;
 using bowling_tournament_MVCPRoject.Persistence.Daos;
+using bowling_tournament_MVCPRoject.UI.Queries;
+using bowling_tournament_MVCPRoject.Persistence.Queries;
 
 namespace bowling_tournament_MVCPRoject
 {
@@ -25,9 +27,6 @@ namespace bowling_tournament_MVCPRoject
             });
 
             // Adding DB
-            builder.Services.AddDbContext<BowlingDbContext>(options =>
-                options.UseSqlite(builder.Configuration.GetConnectionString("bowling-tournament-db"))
-            );
             builder.Services.AddDbContext<BowlingDbContextV2>(options =>
                 options.UseSqlite(builder.Configuration.GetConnectionString("bowling-tournament-db-v2"))
             );
@@ -37,9 +36,13 @@ namespace bowling_tournament_MVCPRoject
             builder.Services.AddScoped<IPlayerDao, PlayerDao>();
             builder.Services.AddScoped<ITournamentDao, TournamentDao>();
             builder.Services.AddScoped<ITournamentRegistrationDao, TournamentRegistrationDao>();
-
+            builder.Services.AddScoped<IRegistrationReadModelGateway, RegistrationReadModelGateway>();
+            builder.Services.AddScoped<ITeamReadModelGateway, TeamReadModelGateway>();
             builder.Services.AddScoped<ITeamManagerService, TeamManagerService>();
             builder.Services.AddScoped<ITournamentService, TournamentService>();
+            builder.Services.AddScoped<IAuthReadModelGateway, AuthReadModelGateway>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddScoped<ITournamentReadModelGateway, TournamentReadModelGateway>();
 
             builder.Services.AddAuthentication("app-cookie")
             .AddCookie("app-cookie", options =>
