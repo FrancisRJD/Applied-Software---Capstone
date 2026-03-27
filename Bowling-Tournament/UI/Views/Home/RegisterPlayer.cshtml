@@ -1,5 +1,52 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model bowling_tournament_MVCPRoject.UI.ViewModels.PlayerVm;
+
+<div class="container mt-4">
+	<div class="row justify-content-center">
+		<div class="col-md-6">
+
+			<h2 class="mb-4">Add Player</h2>
+
+			<form asp-action="RegisterPlayer" method="post">
+				<div class="form-group mb-3">
+					<label asp-for="PlayerName" class="form-label"></label>
+					<input asp-for="PlayerName" class="form-control" />
+					<span asp-validation-for="PlayerName" class="text-danger"></span>
+				</div>
+				<div class="form-group mb-3">
+					<label asp-for="Email" class="form-label>"></label>
+					<input asp-for="Email" class="form-control" />
+					<span asp-validation-for="Email" class="text-danger"></span>
+				</div>
+				<div class="form-group mb-3">
+					<label asp-for="Phone" class="form-label>"></label>
+					<input asp-for="Phone" class="form-control" />
+					<span asp-validation-for="Phone" class="text-danger"></span>
+				</div>
+				<div class="form-group mb-3">
+					<label asp-for="Province" class="form-label>"></label>
+					<select asp-for="Province" class="form-control">
+						<option value="AB">Alberta</option>
+						<option value="BC">British Columbia</option>
+						<option value="MB">Manitoba</option>
+						<option value="NB">New Brunswick</option>
+						<option value="NL">Newfoundland and Labrador</option>
+						<option value="NT">Northwest Territories</option>
+						<option value="NS">Nova Scotia</option>
+						<option value="NU">Nunavut</option>
+						<option value="ON">Ontario</option>
+						<option value="PE">Prince Edward Island</option>
+						<option value="QC">Quebec</option>
+						<option value="SK">Saskatchewan</option>
+						<option value="YT">Yukon</option>
+					</select>
+					<span asp-validation-for="Province" class="text-danger"></span>
+				</div>
+				<div class="form-group mb-3">
+					<label asp-for="City" class="form-label>"></label>
+					<input asp-for="City" class="form-control" />
+					<span asp-validation-for="City" class="text-danger"></span>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

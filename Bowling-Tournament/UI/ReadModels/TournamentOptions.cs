@@ -3,6 +3,6 @@
     public class TournamentOptions
     {
         public int Id { get; set; }
-        public string TournamentName { get; set; }
+        public string? TournamentName { get; set; }
     }
 }

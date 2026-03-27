@@ -1,15 +1,17 @@
-﻿@using bowling_tournament_MVCPRoject.Domain.Entities
-@using bowling_tournament_MVCPRoject.UI.ViewModels
-@model TeamDisplayVM
+﻿@model bowling_tournament_MVCPRoject.UI.ReadModels.TeamListItem
+
+@{
+    ViewData["Title"] = "Team Details";
+}
 <div class="justify-content-center row">
 	<div class="col-10">
 		<div class="card">
 			<div class="card-header">
-				<h3>@Model.TeamName</h3>
+				<h3>@Model.teamName</h3>
 			</div>
 			<div class="card-body">
 				<ul class="list-unstyled">
-					<li>Division: @Model.TeamDivision</li>
+					<li>Division: @Model.teamDivision</li>
 					<li>
                         <h4 class="pt-2">Players:</h4>
 
@@ -25,10 +27,10 @@
                             </thead>
 
                             <tbody>
-                                @foreach (Player player in Model.Players)
+								@foreach (var player in Model.Players)
                                 {
                                     <tr>
-                                        <td>@player.PlayerName</td>
+                                        <td>@player.Name</td>
                                         <td>@player.City</td>
                                         <td>@player.Province</td>
                                         <td>@player.Email</td>

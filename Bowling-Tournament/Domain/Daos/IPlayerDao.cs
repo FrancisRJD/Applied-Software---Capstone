@@ -18,6 +18,7 @@ namespace bowling_tournament_MVCPRoject.Domain.Daos
         public void editPlayer(PlayerV2 player);
         public void removePlayer(PlayerV2 player); //Only uses playerId, other details ignored
 
+        public List<PlayerV2> findPlayersByTeam(TeamV2 team);
         public void saveChanges();
     }
 }

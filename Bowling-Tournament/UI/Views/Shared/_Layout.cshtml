@@ -28,7 +28,10 @@
 							<a asp-controller="Home" asp-action="TeamList" class="nav-link text-dark">Public Team List</a>
 						</li>
 						<li class="nav-item">
-							<a asp-controller="Home" asp-action="Register" class="nav-link text-dark">Register Team</a>
+							<a asp-controller="Home" asp-action="ViewTournaments" class="nav-link text-dark">Tournament List</a>
+						</li>
+						<li class="nav-item">
+							<a asp-controller="Team" asp-action="Register" class="nav-link text-dark">Register Team</a>
 						</li>
 						@if (User.Identity != null && User.Identity.IsAuthenticated)
 						{
@@ -36,6 +39,9 @@
 
 								<a asp-controller="Admin" asp-action="TeamListAdmin" class="nav-link text-dark">Administration Team List</a>
 
+							</li>
+							<li class="nav-item">
+								<a asp-controller="Admin" asp-action="CreateTournament" class="nav-link text-dark">Create a Tournament</a>
 							</li>
 						}
 						@if (!User.Identity.IsAuthenticated)

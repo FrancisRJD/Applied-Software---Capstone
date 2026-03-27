@@ -7,5 +7,6 @@ namespace bowling_tournament_MVCPRoject.UI.Queries
     {
         Task<List<TournamentListItem>> GetAllAsync();
         Task<List<TournamentOptions>> GetTournamentOptionsAsync();
+        Task<TournamentListItem?> GetByIdAsync(int id);
     }
 }

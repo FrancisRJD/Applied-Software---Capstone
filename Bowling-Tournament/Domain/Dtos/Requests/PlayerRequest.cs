@@ -1,4 +1,6 @@
-﻿namespace bowling_tournament_MVCPRoject.Domain.Dtos.Requests
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace bowling_tournament_MVCPRoject.Domain.Dtos.Requests
 {
     public class PlayerRequest
     {
@@ -8,13 +10,15 @@
         public string Email { get; set; }
         public string City { get; set; }
         public string Province { get; set; }
+        public string Phone { get; set; }
         public PlayerRequest(
             int playerId,
             int teamId,
             string name,
             string email,
             string city,
-            string province
+            string province,
+            string phone
             ) { 
             Id = playerId;
             TeamId = teamId;
@@ -22,6 +26,7 @@
             Email = email;
             City = city;
             Province = province;
+            Phone = phone;
         }
     }
 }

@@ -1,84 +1,55 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
-using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
+﻿using bowling_tournament_MVCPRoject.Domain.Services;
+using bowling_tournament_MVCPRoject.UI.Queries;
 using bowling_tournament_MVCPRoject.UI.ViewModels;
-using bowling_tournament_MVCPRoject.Domain.Entities;
-using bowling_tournament_MVCPRoject.Persistence;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace bowling_tournament_MVCPRoject.UI.Controllers
 {
     public class AuthController : Controller
     {
-        private readonly BowlingDbContext _db;
+        private readonly IAuthReadModelGateway _authGateway;
+        private readonly IAuthService _authService;
 
-
-        public AuthController(BowlingDbContext db)
+        public AuthController(IAuthReadModelGateway authGateway, IAuthService authService)
         {
-            _db = db;
+            _authGateway = authGateway;
+            _authService = authService;
         }
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Login()
-        {
-            return View(new LoginVm());
-        }
+        public IActionResult Login() => View(new LoginVm());
 
         [AllowAnonymous]
         [HttpPost]
         public async Task<IActionResult> Login(LoginVm vm)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(vm);
-            }
+            if (!ModelState.IsValid) return View(vm);
 
-            BowlingUser user = null;
+            var user = await _authGateway.GetUserByUsernameAsync(vm.UserName);
 
-            var allUsers = await _db.BowlingUser.ToListAsync();
-
-            foreach (var u in allUsers)
-            {
-                if (u.UserName == vm.UserName)
-                {
-                    user = u;
-                    break;
-                }
-            }
-
-            if (user == null)
+            if (user == null || !_authService.VerifyPassword(user, vm.Password))
             {
                 ModelState.AddModelError("", "Invalid username or password.");
                 return View(vm);
             }
 
-            var hasher = new PasswordHasher<object>();
-            var result = hasher.VerifyHashedPassword(null, user.PasswordHash, vm.Password);
-            if (result == PasswordVerificationResult.Failed)
-            {
-                ModelState.AddModelError("", "Invalid username or password.");
-                return View(vm);
-            }
-
-            // Claims
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, user.UserName)
             };
 
             if (user.IsAdmin)
-            {
                 claims.Add(new Claim("IsAdmin", "true"));
-            }
 
             var identity = new ClaimsIdentity(claims, "app-cookie");
             var principal = new ClaimsPrincipal(identity);
 
             await HttpContext.SignInAsync("app-cookie", principal);
-
             return RedirectToAction("Index", "Home");
         }
 
@@ -92,13 +63,6 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
 
         [AllowAnonymous]
         [HttpGet]
-        public IActionResult Denied()
-        {
-            return View();
-        }
-        //public IActionResult Index()
-        //{
-        //    return View();
-        //}
+        public IActionResult Denied() => View();
     }
 }

@@ -1,123 +1,101 @@
-﻿using bowling_tournament_MVCPRoject.Domain.Entities;
-using bowling_tournament_MVCPRoject.Persistence;
+﻿using bowling_tournament_MVCPRoject.Domain.Dtos.Requests;
+using bowling_tournament_MVCPRoject.Domain.Services;
+using bowling_tournament_MVCPRoject.UI.Queries;
 using bowling_tournament_MVCPRoject.UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 
-
-// TODO
 namespace bowling_tournament_MVCPRoject.UI.Controllers
 {
     public class TeamController : Controller
     {
-        private readonly BowlingDbContext _db;
-        
-        public TeamController(BowlingDbContext db)
-        {
-            _db = db;
-        }
+        private readonly ITeamManagerService _teamService;
+        private readonly ITeamReadModelGateway _teamGateway;
+        private readonly IRegistrationReadModelGateway _registrationGateway;
 
-        private IEnumerable<SelectListItem> BuildDivisionOptions()
+        public TeamController(ITeamManagerService teamService, ITeamReadModelGateway teamGateway, IRegistrationReadModelGateway registrationGateway)
         {
-            return _db.Division
-                .OrderBy(d => d.DivisionName)
-                .Select(d => new SelectListItem
-                {
-                    Value = d.DivisionId.ToString(),
-                    Text = d.DivisionName
-                })
-                .ToList();
+            _teamService = teamService;
+            _teamGateway = teamGateway;
+            _registrationGateway = registrationGateway;
         }
 
         [HttpGet]
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
             var vm = new TeamRegisterVm
             {
-                DivisionOptions = BuildDivisionOptions()
+                DivisionOptions = await _teamGateway.GetDivisionOptionsAsync()
             };
             return View(vm);
         }
 
         [HttpPost]
-        public IActionResult Register(TeamRegisterVm vm)
+        public async Task<IActionResult> Register(TeamRegisterVm vm)
         {
-            vm.DivisionOptions = BuildDivisionOptions();
+            vm.DivisionOptions = await _teamGateway.GetDivisionOptionsAsync();
 
             if (!ModelState.IsValid)
             {
                 return View(vm);
             }
 
-            // Biz Rules
-            if (_db.Team.Any(t => t.TeamName == vm.TeamName))
-            {
-                ModelState.AddModelError("TeamName", "This team name is already taken.");
-                return View(vm);
-            }
-
             if (vm.Players.Count != 4)
             {
-                ModelState.AddModelError("", "You need at least four players.");
+                ModelState.AddModelError("", "You need exactly four players.");
                 return View(vm);
             }
 
-            var team = new Team
-            {
-                TeamName = vm.TeamName,
-                DivisionId = vm.DivisionId,
-                RegistrationPaid = false,
-                PaymentDate = null
-            };
+            var teamRequest = new TeamRequest(0, vm.TeamName, vm.DivisionId);
+            var teamResult = _teamService.tryCreateTeam(teamRequest);
 
-            _db.Team.Add(team);
-            _db.SaveChanges();
+            if (!teamResult.success)
+            {
+                foreach (var error in teamResult.Errors)
+                {
+                    ModelState.AddModelError("", error);
+                }
+                return View(vm);
+            }
 
             foreach (var p in vm.Players)
             {
-                var player = new Player
+                var playerRequest = new PlayerRequest(
+                    0,
+                    teamResult.team.TeamId,
+                    p.PlayerName ?? "",
+                    p.Email ?? "",
+                    p.City ?? "",
+                    p.Province ?? "",
+                    p.Phone ?? ""
+                );
+
+                var playerResult = _teamService.tryAddPlayer(playerRequest);
+
+                if (!playerResult.success)
                 {
-                    TeamId = team.TeamId,
-                    PlayerName = p.PlayerName,
-                    City = p.City,
-                    Province = p.Province,
-                    Email = p.Email,
-                    Phone = p.Phone
-                };
-                _db.Player.Add(player);
+                    foreach (var error in playerResult.Errors)
+                    {
+                        ModelState.AddModelError("", error);
+                    }
+                    return View(vm);
+                }
             }
-
-            _db.SaveChanges();
-
 
             TempData["Message"] = "Team registered successfully. Your registration will be complete once payment is received.";
-            return RedirectToAction("Thanks");
+            return View(vm);
         }
 
-        public IActionResult Paid()
+        public async Task<IActionResult> Paid()
         {
-            var teams = _db.Team
-                .Include(t => t.Division)
-                .Where(t => t.RegistrationPaid)
-                .OrderBy(t => t.TeamName)
-                .ToList();
-
-            return View(teams);
+            var registrations = await _registrationGateway.GetAllPaidAsync();
+            return View(registrations);
         }
 
-        public IActionResult Detials(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var team = _db.Team
-                .Include(t => t.Division)
-                .Include(t => t.Players)
-                .FirstOrDefault(t => t.TeamId == id);
-
-            if (team == null)
-            {
-                return NotFound();
-            }
-
+            var team = await _teamGateway.GetByIdAsync(id);
+            if (team == null) return NotFound();
             return View(team);
         }
     }

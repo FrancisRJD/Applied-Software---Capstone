@@ -10,9 +10,6 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
         RegisterTeamResult tryRegisterTeam(RegisterTeamRequest request);
             //Request contains registration details (TeamID, tournamentID)
 
-        RegisterTeamResult tryMarkTeamPaid(RegisterTeamRequest request);
-            //Request contains registration details (TeamID, tournamentID)
-
         TeamResult tryCreateTeam(TeamRequest request); 
             //Request contains ALL team details and 4 players. Does not contain a teamID (Since team will be assigned one)
 
@@ -30,5 +27,7 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
             //Request contains player details (Must also have teamID),
         PlayerResult tryDeletePlayer(PlayerRequest request);
             //Request contains playerID
+        PlayerResult tryUpdatePlayer(PlayerRequest request);
+        RegisterTeamResult tryMarkRegistrationPaid(RegisterTeamRequest request);
     }
 }
