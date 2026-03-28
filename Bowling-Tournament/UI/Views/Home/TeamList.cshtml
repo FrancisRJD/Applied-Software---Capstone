@@ -1,4 +1,4 @@
-﻿@model List<bowling_tournament_MVCPRoject.UI.ReadModels.TeamListItem>
+﻿@model List<bowling_tournament_MVCPRoject.UI.ReadModels.RegistrationListItem>
 
 @{
 	ViewData["Title"] = "Team List";
@@ -12,7 +12,7 @@
 		<p><a class="btn-primary btn" asp-controller="Admin" asp-action="TeamListAdmin">Admin Team Management</a></p>
 	}
 	<div>
-		@foreach (var division in Model.GroupBy(division => division.teamDivision))
+		@foreach (var division in Model.GroupBy(division => division.team.teamDivision))
 		{
 			<h4 class="align-middle">@division.Key</h4>
 			<table class="table table-responsive">
@@ -23,12 +23,12 @@
 					</tr>
 				</thead>
 				<tbody>
-					@foreach (var team in Model.Where(t => t.teamDivision == division.Key))
+					@foreach (var registration in Model.Where(t => t.team.teamDivision == division.Key))
 					{
 						<tr>
-							<td>@team.teamName</td>
+							<td>@registration.team.teamName</td>
 							<td>
-								<a class="btn-primary btn" asp-action="Details" asp-route-id="@team.id"><i class="bi bi-search"></i> View</a>
+								<a class="btn-primary btn" asp-action="Details" asp-route-id="@registration.team.id"><i class="bi bi-search"></i> View</a>
 							</td>
 						</tr>
 					}

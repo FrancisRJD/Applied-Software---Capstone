@@ -32,8 +32,6 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
 
             teamFound.TeamName = team.TeamName;
             teamFound.TeamDivision = team.TeamDivision;
-            teamFound.RegistrationPaid = team.RegistrationPaid;
-            teamFound.PaymentDate = team.PaymentDate;
 
             _db.SaveChanges();
         }

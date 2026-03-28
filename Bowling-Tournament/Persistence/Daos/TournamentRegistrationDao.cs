@@ -45,6 +45,24 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
                 .ToList();
         }
 
+        public List<Registration> getRegistrationsByStatus(int status)
+        {
+
+            return _db.Registration
+                .Where(r => r.Status == (RegistrationStatus) status)
+                .Select(tr => new Registration
+                {
+                    RegistrationId = tr.RegistrationId,
+                    TournamentId = tr.TournamentId,
+                    TeamId= tr.TeamId,
+                    RegisteredOn = tr.RegisteredOn,
+                    Status = tr.Status,
+                    StatusDate = tr.StatusDate
+
+                })
+                .ToList();
+        }
+
         public void removeRegistration(Registration registration)
         {
             _db.Registration.Remove(registration);
@@ -70,6 +88,11 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
             found.StatusDate = registration.StatusDate;
 
             _db.SaveChanges();
+        }
+
+        public Registration? findById(int id)
+        {
+            return _db.Registration.FirstOrDefault(r => r.RegistrationId == id);
         }
     }
 }

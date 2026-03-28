@@ -16,7 +16,7 @@ namespace bowling_tournament_MVCPRoject.Domain.Dtos.Requests
                 int registrationId,
                 int teamId,
                 int tournamentId,
-                RegistrationStatus status //Just incase we want to make it a feature where admins can mark a registration as already paid for
+                RegistrationStatus status
             ) { 
             Status = status;
             TournamentId = tournamentId;

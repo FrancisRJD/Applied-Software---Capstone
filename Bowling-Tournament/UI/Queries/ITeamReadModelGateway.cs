@@ -12,6 +12,6 @@ namespace bowling_tournament_MVCPRoject.UI.Queries
         Task<List<PlayerListItem>> GetTeamPlayersAsync(TeamListItem team);
         Task<TeamListItem?> GetByIdAsync(int id);
         Task<List<SelectListItem>> GetDivisionOptionsAsync();
-        Task<List<TeamListItem>> GetAllWithStatusAsync();
+        Task<List<RegistrationListItem>> GetAllTeamRegistrations();
     }
 }

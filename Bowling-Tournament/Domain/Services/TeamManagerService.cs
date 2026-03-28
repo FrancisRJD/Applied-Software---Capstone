@@ -127,26 +127,34 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
         }
 
         public RegisterTeamResult tryMarkRegistrationPaid(RegisterTeamRequest request)
+            //Note: Because id passed in by request is now the register's ID on the registration table instead of the 
+            //  team table, we can just directly grab the registration now
         {
             var result = new RegisterTeamResult();
-            var team = _teamDao.findTeam(new TeamV2 { TeamId = request.TeamId });
-            if (team == null || team.TeamId == 0)
+//            var team = _teamDao.findTeam(new TeamV2 { TeamId = request.TeamId });
+            var registration = _registrationDao.findById(request.Id);
+            if (registration == null || registration.TeamId == 0)
             {
                 result.Errors.Add("Team not found.");
                 return result;
             }
-            team.RegistrationPaid = true;
-            team.PaymentDate = DateTime.Now;
+            registration.Status = RegistrationStatus.Paid;
+            registration.StatusDate = DateTime.Now;
             _teamDao.saveChanges();
             result.success = true;
             return result;
         }
 
         public RegisterTeamResult tryRegisterTeam(RegisterTeamRequest request)
+            //Doesn't stop unpaying teams from registering somehow?
+            //Blocks double-registration but error message given is incorrect
+            //  (Somehow giving "Paid registration" error?)
+            //Prevents tournament exceeding capacity only sometimes somehow?
         {
             var result = new RegisterTeamResult();
 
             // Rule: team must have exactly 4 players
+            // I'll need to set up unit testing for this later but should work looking at this)
             var players = _playerDao.findPlayersByTeam(new TeamV2 { TeamId = request.TeamId });
             if (players.Count != 4)
             {
@@ -177,7 +185,7 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
                 return result;
             }
             var currentRegistrations = _registrationDao.getRegistrationsByTournament(request.TournamentId);
-            if (currentRegistrations.Count >= tournament.TeamCapacity)
+            if (currentRegistrations.Count > tournament.TeamCapacity)
             {
                 result.Errors.Add("This tournament has reached its team capacity.");
                 return result;

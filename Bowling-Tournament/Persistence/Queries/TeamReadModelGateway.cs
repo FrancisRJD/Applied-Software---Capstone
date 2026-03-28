@@ -17,19 +17,61 @@ namespace bowling_tournament_MVCPRoject.Persistence.Queries
         {
             return await
                 (from t in _db.Team
+                 join d in _db.Division on t.TeamDivision equals d.DivisionId
                  select new TeamListItem
                  {
                      id = t.TeamId,
                      teamName = t.TeamName,
-                     teamDivision = t.TeamDivision
+                     teamDivision = t.TeamDivision,
+                     divisionName = d.DivisionName,
                  }
                 ).ToListAsync();
         }
 
-        public async Task<List<TeamListItem>> GetAllWithStatusAsync()
+        public async Task<List<RegistrationListItem>> GetAllTeamRegistrations()
+            //GetAllAsync is now for tournaments, this is specifically for *Registrations*
+        {
+            return await
+                (from r in _db.Registration
+                 join t in _db.Team on r.TeamId equals t.TeamId
+                 join d in _db.Division on t.TeamDivision equals d.DivisionId
+                 join to in _db.Tournament on r.TournamentId equals to.TournamentId
+                 select new RegistrationListItem
+                 {
+                     id = r.RegistrationId,
+                     tournament = new TournamentListItem
+                     {
+                         id = to.TournamentId,
+                         tournamentName = to.TournamentName,
+                         tournamentDate = to.TournamentDate,
+                         location = to.Location,
+                         teamCapacity = to.TeamCapacity,
+                         watcherCapacity = to.WatcherCapacity,
+                         registrationOpen = to.RegistrationOpen,
+                     },
+                     team = new TeamListItem
+                     {
+                         id = t.TeamId,
+                         teamName = t.TeamName,
+                         teamDivision = t.TeamDivision,
+                         divisionName = d.DivisionName,
+                         Players = new List<PlayerListItem>() //If players need to be fetched here just bolt on another join
+                     },
+                     registeredOn = r.RegisteredOn,
+                     registrationStatus = r.Status,
+                     statusDate = r.StatusDate
+                 }
+                ).ToListAsync();
+        }
+        /*
+        public async Task<List<TeamListItem>> GetAllTeamsAsync()
+            //New idea, *Registration-first*. TeamListItem is now specifically for registrations so I can make
+            //  a separate viewmodel for teams specifically.
         {
             return await
                 (from t in _db.Team
+                 join d in _db.Division on t.TeamDivision equals d.DivisionId
+                /*(from t in _db.Team
                  join d in _db.Division on t.TeamDivision equals d.DivisionId
                  join r in _db.Registration on t.TeamId equals r.TeamId into registrations
                  from r in registrations.DefaultIfEmpty()
@@ -39,11 +81,13 @@ namespace bowling_tournament_MVCPRoject.Persistence.Queries
                      teamName = t.TeamName,
                      teamDivision = t.TeamDivision,
                      divisionName = d.DivisionName,
-                     IsPaid = t.RegistrationPaid,
-                     DatePaid = t.PaymentDate
+                     IsPaid = r.Status,
+                     DatePaid = r.StatusDate
                  })
                 .ToListAsync();
+                
         }
+        */
 
         public async Task<List<TeamListItem>> GetAllInTournamentAsync(TournamentListItem tournament)
         {

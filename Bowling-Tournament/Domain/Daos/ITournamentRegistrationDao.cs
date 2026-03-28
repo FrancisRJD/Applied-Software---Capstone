@@ -13,6 +13,8 @@ namespace bowling_tournament_MVCPRoject.Domain.Daos
                 DELETING registration by registrationID
          */
 
+        public Registration? findById(int id);
+
         public Registration findRegistrationbyTeamAndTournament(int teamId, int tournamentId);
         public List<Registration> getRegistrationsByTournament(int tournamentId);
         public void updateRegistration(Registration registration);
