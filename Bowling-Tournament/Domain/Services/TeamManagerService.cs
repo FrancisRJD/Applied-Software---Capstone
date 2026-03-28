@@ -216,6 +216,7 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
                 TeamId = request.TeamId,
                 TournamentId = request.TournamentId,
                 RegisteredOn = DateTime.Now,
+                Status = RegistrationStatus.Registered,
                 StatusDate = DateTime.Now
             };
             _registrationDao.addRegistration(registration);
