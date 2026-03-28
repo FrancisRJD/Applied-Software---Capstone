@@ -28,6 +28,6 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
         PlayerResult tryDeletePlayer(PlayerRequest request);
             //Request contains playerID
         PlayerResult tryUpdatePlayer(PlayerRequest request);
-        RegisterTeamResult tryMarkRegistrationPaid(RegisterTeamRequest request);
+        RegisterTeamResult tryMarkPaid(RegisterTeamRequest request);
     }
 }

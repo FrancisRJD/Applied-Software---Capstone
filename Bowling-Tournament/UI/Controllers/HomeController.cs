@@ -31,7 +31,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         public async Task<IActionResult> TeamList()
         {
             var teams = await _teamGateway.GetAllTeamRegistrations();
-            var paidTeams = teams.Where(t => t.registrationStatus == RegistrationStatus.Paid).ToList();
+            var paidTeams = teams.Where(t => t.team.isPaid).ToList();
             return View(paidTeams);
         }
 

@@ -34,7 +34,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
 
         private bool IsAdmin() => User.HasClaim("IsAdmin", "true");
 
-        // TEAM LIST
+        // TEAM REGISTRATION
         [HttpGet]
         public async Task<IActionResult> TeamRegistrationAdmin(string? filterBy, int? division, RegistrationStatus? paid, string? sortBy, string? order)
             //Note to Nick when you see this-- basically I've converted this former team list into a registration list.
@@ -62,6 +62,28 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
             return View(registrations);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> TeamListAdmin(string? filterBy, int? division, string? sortBy, string? order)
+        {
+            if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
+
+            var teams = await _teamGateway.GetAllAsync();
+
+            if (filterBy == "Division" && division.HasValue)
+                teams = teams.Where(t => t.teamDivision == division.Value).ToList();
+            
+            bool descending = order == "desc";
+            teams = sortBy switch
+            {
+                "Name" => descending ? teams.OrderByDescending(t => t.teamName).ToList() : teams.OrderBy(t => t.teamName).ToList(),
+                _ => teams
+            };
+
+            return View(teams);
+        }
+
+
+
         // TEAM DETAILS
         [HttpGet]
         public async Task<IActionResult> DetailsAdmin(int id)
@@ -76,6 +98,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         public async Task<IActionResult> EditTeam(int id)
         {
             if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
+            Console.WriteLine("DEBUG: ID AT VIEW LEVEL IS " + id);
             var team = await _teamGateway.GetByIdAsync(id);
             if (team == null) return NotFound();
 
@@ -120,7 +143,6 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
             if (team == null) return NotFound();
             return View("Delete", team);
         }
-
         [HttpPost]
         public IActionResult DeleteTeamConfirmed(int id)
         {
@@ -129,6 +151,24 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
             if (!result.success) return NotFound();
             TempData["Message"] = $"Team {id} deleted.";
             return RedirectToAction("TeamListAdmin");
+        }
+
+        //DELETE REGISTRATION
+            //Put here for now as is as deleting registrations not *strictly* necessary yet.
+        [HttpGet]
+        public async Task<IActionResult> DeleteRegistration(int registrationId)
+        {
+            if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
+            var registration = await _registrationGateway.GetByIdAsync(registrationId);
+            if (registration == null) return NotFound();
+            return View("DeleteRegistration", registration);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteRegistrationConfirmed(int registrationId)
+        {
+            if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
+            return RedirectToAction("TeamRegistrationAdmin");
         }
 
         // EDIT PLAYER
@@ -194,11 +234,11 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
 
         // MARK PAID
         [HttpGet]
-        public IActionResult MarkPaid(int registrationId)
+        public IActionResult MarkPaid(int teamId)
         {
             if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
-            var request = new RegisterTeamRequest(0, registrationId, 0);
-            var result = _teamService.tryMarkRegistrationPaid(request);
+            var request = new RegisterTeamRequest(0, teamId, 0);
+            var result = _teamService.tryMarkPaid(request);
             TempData["Message"] = result.success ? "Team marked as paid." : result.Errors.FirstOrDefault();
             return RedirectToAction("TeamListAdmin");
         }
@@ -208,25 +248,25 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         public async Task<IActionResult> Summary()
         {
             if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
-            var teams = await _teamGateway.GetAllTeamRegistrations();
+            var teams = await _teamGateway.GetAllAsync();
             const decimal fee = 200.00m;
 
             var summary = teams
-                .GroupBy(t => t.team.divisionName ?? "Unknown")
+                .GroupBy(t => t.divisionName ?? "Unknown")
                 .Select(g => new SummaryVM
                 {
                     DivisionName = g.Key,
                     Teams = g.Count(),
-                    PayingTeams = g.Count(t => t.registrationStatus == RegistrationStatus.Paid),
-                    TotalFees = g.Count(t => t.registrationStatus == RegistrationStatus.Paid) * fee
+                    PayingTeams = g.Count(t => t.isPaid),
+                    TotalFees = g.Count(t => t.isPaid) * fee
                 }).ToList();
 
             summary.Add(new SummaryVM
             {
                 DivisionName = "Overall",
                 Teams = teams.Count,
-                PayingTeams = teams.Count(t => t.registrationStatus == RegistrationStatus.Paid),
-                TotalFees = teams.Count(t => t.registrationStatus == RegistrationStatus.Paid) * fee
+                PayingTeams = teams.Count(t => t.isPaid),
+                TotalFees = teams.Count(t => t.isPaid) * fee
             });
 
             return View(summary);
@@ -343,7 +383,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
                 return View(vm);
             }
             TempData["Message"] = "Team registered for tournament successfully.";
-            return RedirectToAction("TeamListAdmin");
+            return RedirectToAction("TeamRegistrationAdmin");
         }
 
         [HttpGet]

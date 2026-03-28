@@ -126,52 +126,65 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
             return result;
         }
 
-        public RegisterTeamResult tryMarkRegistrationPaid(RegisterTeamRequest request)
-            //Note: Because id passed in by request is now the register's ID on the registration table instead of the 
-            //  team table, we can just directly grab the registration now
+        public RegisterTeamResult tryMarkPaid(RegisterTeamRequest request)
+            //Note to self: Because registrations per specs are on a PER TEAM basis you actually need to mark the team as paid separately!
+            //I need to rename this to "tryMarkTeamPaid" so this is clear...
         {
             var result = new RegisterTeamResult();
-//            var team = _teamDao.findTeam(new TeamV2 { TeamId = request.TeamId });
-            var registration = _registrationDao.findById(request.Id);
-            if (registration == null || registration.TeamId == 0)
+            var team = _teamDao.findTeam(new TeamV2 { TeamId = request.TeamId });
+//            var registration = _registrationDao.findById(request.Id);
+            if (team == null || team.TeamId == -1)
             {
                 result.Errors.Add("Team not found.");
                 return result;
             }
-            registration.Status = RegistrationStatus.Paid;
-            registration.StatusDate = DateTime.Now;
+
+            team.RegistrationPaid = true;
+            team.PaymentDate = DateTime.Now;
             _teamDao.saveChanges();
             result.success = true;
             return result;
         }
 
         public RegisterTeamResult tryRegisterTeam(RegisterTeamRequest request)
-            //Doesn't stop unpaying teams from registering somehow?
-            //Blocks double-registration but error message given is incorrect
-            //  (Somehow giving "Paid registration" error?)
+            //Doesn't stop unpaying teams from registering somehow? [FIXED]
+            //Blocks double-registration but error message given is incorrect [FIXED-ISH]
             //Prevents tournament exceeding capacity only sometimes somehow?
         {
             var result = new RegisterTeamResult();
 
             // Rule: team must have exactly 4 players
-            // I'll need to set up unit testing for this later but should work looking at this)
             var players = _playerDao.findPlayersByTeam(new TeamV2 { TeamId = request.TeamId });
-            if (players.Count != 4)
+            bool playerDetailsNotFilled = false;
+
+            //I figured out the issue with the players-- when registering a team the form does not
+            //  properly check the player's details (Checks min/max length of player object, but NOT
+                // what the player object's details are filled with!!!)
+            //As a result, the players DO exist but with empty details in this context. My temp fix is
+            //  to just check if any of the players have an empty name (As name is required).
+            //      - Francis
+
+            foreach (var player in players){
+                if (player.PlayerName.Trim() == "") playerDetailsNotFilled = true;
+            }
+
+            if (players.Count != 4 || playerDetailsNotFilled)
             {
                 result.Errors.Add("A team must have exactly four players before registering.");
                 return result;
             }
 
             // Rule: team must have paid
-            var existingReg = _registrationDao.findRegistrationbyTeamAndTournament(request.TeamId, request.TournamentId);
-            if (existingReg.RegistrationId != 0 && existingReg.Status != RegistrationStatus.Paid)
+            var existingTeam = _teamDao.findTeam(new TeamV2 { TeamId = request.TeamId });
+            if (!existingTeam.RegistrationPaid)
             {
                 result.Errors.Add("A team must have paid the registration fee before registering.");
                 return result;
             }
 
+            var existingReg = _registrationDao.findRegistrationbyTeamAndTournament(request.TeamId, request.TournamentId);
             // Rule: team cannot register twice
-            if (existingReg.RegistrationId != 0)
+            if (existingReg != null)
             {
                 result.Errors.Add("This team is already registered for this tournament.");
                 return result;
@@ -179,15 +192,22 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
 
             // Rule: tournament cannot exceed capacity
             var tournament = _tournamentDao.findTournament(new Tournament { TournamentId = request.TournamentId });
-            if (tournament.TournamentId == 0)
+            if (tournament.TournamentId == -1) //Set up findTournament to return a tournament with id -1 for empty returns
             {
                 result.Errors.Add("Tournament not found.");
                 return result;
             }
             var currentRegistrations = _registrationDao.getRegistrationsByTournament(request.TournamentId);
-            if (currentRegistrations.Count > tournament.TeamCapacity)
+            if (currentRegistrations.Count >= tournament.TeamCapacity)
             {
                 result.Errors.Add("This tournament has reached its team capacity.");
+                return result;
+            }
+
+            //Rule: Tournament registration must be open
+            if(!tournament.RegistrationOpen)
+            {
+                result.Errors.Add("Tournament is closed for registrations");
                 return result;
             }
 
@@ -196,7 +216,6 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
                 TeamId = request.TeamId,
                 TournamentId = request.TournamentId,
                 RegisteredOn = DateTime.Now,
-                Status = request.Status,
                 StatusDate = DateTime.Now
             };
             _registrationDao.addRegistration(registration);

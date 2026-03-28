@@ -38,7 +38,7 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
 
         public TeamV2 findTeam(TeamV2 team)
         {
-            return _db.Team.Find(team.TeamId) ?? new TeamV2();
+            return _db.Team.Find(team.TeamId) ?? new TeamV2 { TeamId = -1 };
         }
 
         /// <summary>

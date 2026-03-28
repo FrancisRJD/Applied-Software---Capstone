@@ -1,4 +1,4 @@
-﻿@model bowling_tournament_MVCPRoject.UI.ReadModels.RegistrationListItem
+﻿@model bowling_tournament_MVCPRoject.UI.ReadModels.TeamListItem
 @{
     ViewData["Title"] = "Delete Team";
 }
@@ -6,17 +6,17 @@
     <div class="col-10">
         <div class="card">
             <div class="card-header">
-                <h3>@Model.team.teamName</h3>
+                <h3>@Model.teamName</h3>
             </div>
             <div class="card-body">
                 <ul class="list-unstyled">
-                    <li>Division: @Model.team.divisionName</li>
-                    <li>Paid: @(Model.registrationStatus != bowling_tournament_MVCPRoject.Domain.Entities.RegistrationStatus.Unpaid 
+                    <li>Division: @Model.divisionName</li>
+                    <li>Paid: @(Model.isPaid
                         ? "Yes" : "No")</li>
                     <li>
                         <h4 class="pt-2">Players:</h4>
                         <ul class="list-group list-unstyled">
-                            @foreach (var player in Model.team.Players)
+                            @foreach (var player in Model.Players)
                             {
                                 <li>@player.Name</li>
                             }

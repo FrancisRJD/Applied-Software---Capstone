@@ -7,6 +7,10 @@
         public int teamDivision { get; set; }
         public string? divisionName { get; set; }
 
+        public bool isPaid { get; set; }
+
+        public DateTime? paymentDate { get; set; }
+
         public List<PlayerListItem> Players { get; set; } = new();
     }
 }

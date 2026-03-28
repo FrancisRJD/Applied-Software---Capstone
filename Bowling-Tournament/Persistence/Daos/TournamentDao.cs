@@ -20,7 +20,7 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
 
         public Tournament findTournament(Tournament tournament)
         {
-            return _db.Tournament.Find(tournament.TournamentId) ?? new Tournament();
+            return _db.Tournament.Find(tournament.TournamentId) ?? new Tournament { TournamentId = -1 };
         }
 
         public void removeTournament(Tournament tournament)

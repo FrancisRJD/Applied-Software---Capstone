@@ -24,6 +24,8 @@ namespace bowling_tournament_MVCPRoject.Persistence.Queries
                      teamName = t.TeamName,
                      teamDivision = t.TeamDivision,
                      divisionName = d.DivisionName,
+                     isPaid = t.RegistrationPaid,
+                     paymentDate = t.PaymentDate
                  }
                 ).ToListAsync();
         }
@@ -123,17 +125,20 @@ namespace bowling_tournament_MVCPRoject.Persistence.Queries
 
         public async Task<TeamListItem?> GetByIdAsync(int id)
         {
-            var team = await _db.Team
-                 .Where(t => t.TeamId == id)
-                 .Select(t => new TeamListItem
+            var team = await
+                (from t in _db.Team
+                 join d in _db.Division on t.TeamDivision equals d.DivisionId
+                 where t.TeamId == id
+                 select new TeamListItem
                  {
                      id = t.TeamId,
                      teamName = t.TeamName,
-                     teamDivision = t.TeamDivision
+                     teamDivision = t.TeamDivision,
+                     divisionName = d.DivisionName,
+                     isPaid = t.RegistrationPaid,
+                     paymentDate = t.PaymentDate,
                  }
                 ).FirstOrDefaultAsync();
-
-            if (team == null) return null;
 
             team.Players = await GetTeamPlayersAsync(team);
             return team;

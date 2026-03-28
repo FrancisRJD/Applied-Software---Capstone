@@ -1,15 +1,15 @@
 ﻿@using bowling_tournament_MVCPRoject.Domain.Entities
 @model List<bowling_tournament_MVCPRoject.UI.ReadModels.RegistrationListItem>
 @{
-    ViewData["Title"] = "Team List - Admin View";
+    ViewData["Title"] = "Registration List - Admin View";
 }
 <div class="text-center justify-content-center row">
     <h3>The NBCC Bowling League</h3>
-    <p><a class="btn-primary btn" asp-controller="Home" asp-action="TeamList">Return To Public Listing</a></p>
+    <p><a class="btn-primary btn" asp-controller="Home" asp-action="TeamList">Return To Public Team Listing</a></p>
     <p><a class="btn-primary btn" asp-controller="Admin" asp-action="Summary">View Summary</a></p>
     <div class="container d-flex justify-content-center mt-3">
         <div class="p-3 border rounded bg-light" style="max-width: 650px;">
-            <form class="row g-2" method="get" asp-action="TeamListAdmin">
+            <form class="row g-2" method="get" asp-action="TeamRegistrationAdmin">
                 <div class="col-6">
                     <label class="form-label mb-1 fw-semibold">Filter By</label>
                     <div class="d-flex gap-2">
@@ -74,12 +74,6 @@
                             <td>@registration.team.teamName</td>
                             @switch (registration.registrationStatus)
                             {
-                                case RegistrationStatus.Unpaid:
-                                    <td>Unpaid</td>
-                                    break;
-                                case RegistrationStatus.Paid:
-                                    <td>Paid</td>
-                                    break;
                                 case RegistrationStatus.OnHold:
                                     <td>Paid, On Hold</td>
                                     break;
@@ -90,17 +84,19 @@
                                     <td>(CASE MISSING FOR STATUS @registration.registrationStatus.ToString() )</td>
                                     break;
                             }
-                            <td>@(registration.registrationStatus == RegistrationStatus.Unpaid
-                                ? "-" : registration.statusDate)
-                    </td>
+                            <td>
+                                @registration.statusDate
+                            </td>
                             <td>
                                 <a class="btn-primary btn" asp-action="DetailsAdmin" asp-route-id="@registration.team.id"><i class="bi bi-search"></i> View Team</a>
+                            @* Not yet strictly required by sprint 1B, I leave implementation of registration 
+                                deletion this early up to your discretion
                                 <a class="btn-primary btn" asp-action="DeleteRegistration" asp-route-id="@registration.id"><i class="bi bi-trash"></i> Delete</a>
+                            *@
                             @* MOVED TO NEW TEAMLISTADMIN FILE
                                 <a class="btn-primary btn" asp-action="EditTeam" asp-route-id="@registration.team.id"><i class="bi bi-pencil"></i> Edit</a>
                                 <a class="btn-primary btn" asp-action="DeleteTeam" asp-route-id="@registration.team.id"><i class="bi bi-trash"></i> Delete</a>
                                 <a class="btn-primary btn" asp-action="RegisterTeam" asp-route-teamId="@registration.id"><i class="bi bi-trophy"></i>Register</a> 
-                                *@
                                 @if (registration.registrationStatus == RegistrationStatus.Paid)
                                 {
                                     <a class="btn-primary btn disabled"><i class="bi bi-calendar-check"></i> Mark Paid</a>
@@ -111,6 +107,8 @@
                                         <i class="bi bi-calendar-check"></i> Mark Paid
                                     </a>
                                 }
+
+                                *@
                             </td>
                         </tr>
                     }

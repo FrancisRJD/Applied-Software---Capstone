@@ -2,7 +2,7 @@
 {
     public class Registration
     {
-        public int RegistrationId { get; set; } = -1;
+        public int RegistrationId { get; set; }
         public int TournamentId { get; set; }
         public int TeamId { get; set; }
         public DateTime RegisteredOn { get; set; }

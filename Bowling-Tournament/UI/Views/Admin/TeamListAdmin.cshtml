@@ -1,6 +1,57 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<bowling_tournament_MVCPRoject.UI.ReadModels.TeamListItem>
 @{
+    ViewData["Title"] = "Team List - Admin View";
 }
 @*REVAMPED TeamListAdmin TO BE A DEDICATED TEAM-ONLY VIEW. CONTAINS ONLY TEAM DETAILS AND THEIR DIVISION NAME*@
+
+<div class="text-center justify-content-center row">
+    <h3>The NBCC Bowling League</h3>
+    <p><a class="btn-primary btn" asp-controller="Home" asp-action="TeamList">Return To Public Team Listing</a></p>
+    <p><a class="btn-primary btn" asp-controller="Admin" asp-action="Summary">View Summary</a></p>
+    <div class="container d-flex justify-content-center mt-3">
+        @* Leaving this here incase you wish to add in some additional fancy filter features here Nick.
+        <div class="p-3 border rounded bg-light" style="max-width: 650px;">
+        
+        </div>
+        *@
+
+        <div>
+            @foreach(var division in Model.GroupBy(t => t.divisionName))
+            {
+                <h4 class="align-middle">@division.Key</h4>
+                <table class="table table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Team Name</th>
+                            <th>Payment Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var team in division)
+                        {
+                            <tr>
+                                <td>@team.teamName</td>
+                                <td>
+                                    <a class="btn-primary btn" asp-action="EditTeam" asp-route-id="@team.id"><i class="bi bi-pencil"></i> Edit</a>
+                                    <a class="btn-primary btn" asp-action="DeleteTeam" asp-route-id="@team.id"><i class="bi bi-trash"></i> Delete</a>
+                                    <a class="btn-primary btn" asp-action="RegisterTeam" asp-route-teamId="@team.id"><i class="bi bi-trophy"></i>Register</a>
+                                    @if (team.isPaid)
+                                    {
+                                        <a class="btn-primary btn disabled"><i class="bi bi-calendar-check"></i> Mark Paid</a>
+                                    }
+                                    else
+                                    {
+                                        <a class="btn-primary btn" asp-action="MarkPaid" asp-route-teamId="@team.id">
+                                            <i class="bi bi-calendar-check"></i> Mark Paid
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+</div>
