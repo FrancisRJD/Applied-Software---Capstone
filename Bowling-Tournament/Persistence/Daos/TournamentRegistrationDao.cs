@@ -20,16 +20,15 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
             _db.SaveChanges();
         }
 
-        public Registration findRegistrationbyTeamAndTournament(int teamId, int tournamentId)
+        public Registration? findRegistrationbyTeamAndTournament(int teamId, int tournamentId)
         {
             return _db.Registration
                 .Where(te => te.TeamId == teamId)
                 .Where(to => to.TournamentId == tournamentId)
-                .FirstOrDefault() ?? new Registration();
+                .FirstOrDefault();
         }
 
         public List<Registration> getRegistrationsByTournament(int tournamentId)
-        //I realize more than likely unnecessary since this should be a readModel but bolting it here
         {
             return _db.Registration
                 .Where(r => r.TournamentId == tournamentId)
@@ -41,6 +40,24 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
                     RegisteredOn = tr.RegisteredOn,
                     Status = tr.Status,
                     StatusDate = tr.StatusDate
+                })
+                .ToList();
+        }
+
+        public List<Registration> getRegistrationsByStatus(int status)
+        {
+
+            return _db.Registration
+                .Where(r => r.Status == (RegistrationStatus) status)
+                .Select(tr => new Registration
+                {
+                    RegistrationId = tr.RegistrationId,
+                    TournamentId = tr.TournamentId,
+                    TeamId= tr.TeamId,
+                    RegisteredOn = tr.RegisteredOn,
+                    Status = tr.Status,
+                    StatusDate = tr.StatusDate
+
                 })
                 .ToList();
         }
@@ -70,6 +87,11 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
             found.StatusDate = registration.StatusDate;
 
             _db.SaveChanges();
+        }
+
+        public Registration? findById(int id)
+        {
+            return _db.Registration.FirstOrDefault(r => r.RegistrationId == id);
         }
     }
 }

@@ -46,7 +46,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
                 return View(vm);
             }
 
-            var teamRequest = new TeamRequest(0, vm.TeamName, vm.DivisionId);
+            var teamRequest = new TeamRequest(0, vm.TeamName ?? "", vm.DivisionId);
             var teamResult = _teamService.tryCreateTeam(teamRequest);
 
             if (!teamResult.success)

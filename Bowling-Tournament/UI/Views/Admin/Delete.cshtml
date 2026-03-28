@@ -11,7 +11,8 @@
             <div class="card-body">
                 <ul class="list-unstyled">
                     <li>Division: @Model.divisionName</li>
-                    <li>Paid: @(Model.IsPaid ? "Yes" : "No")</li>
+                    <li>Paid: @(Model.isPaid
+                        ? "Yes" : "No")</li>
                     <li>
                         <h4 class="pt-2">Players:</h4>
                         <ul class="list-group list-unstyled">

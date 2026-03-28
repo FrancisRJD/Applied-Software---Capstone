@@ -10,15 +10,19 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly ITeamReadModelGateway _teamGateway;
         private readonly ITournamentReadModelGateway _tournamentGateway;
+        private readonly IRegistrationReadModelGateway _registrationGateway;
 
         public HomeController(
             ILogger<HomeController> logger,
             ITeamReadModelGateway teamGateway,
-            ITournamentReadModelGateway tournamentGateway)
+            ITournamentReadModelGateway tournamentGateway,
+            IRegistrationReadModelGateway registrationGateway
+            )
         {
             _logger = logger;
             _teamGateway = teamGateway;
             _tournamentGateway = tournamentGateway;
+            _registrationGateway = registrationGateway;
         }
 
         public IActionResult Index() => View();
@@ -26,21 +30,27 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> TeamList()
         {
-            var teams = await _teamGateway.GetAllWithStatusAsync();
-            var paidTeams = teams.Where(t => t.IsPaid).ToList();
+            var teams = await _teamGateway.GetAllTeamRegistrations();
+            var paidTeams = teams.Where(t => t.team.isPaid).ToList();
             return View(paidTeams);
         }
 
         [HttpGet]
         public async Task<IActionResult> Details(int id)
+            //Reminder to self, this is for *team* details
         {
             var team = await _teamGateway.GetByIdAsync(id);
+
+            //To fetch registration data it was intended to be done through the registration gateway/dao stuff, as that's where payment status/dates are at
+            var registrations = await _registrationGateway.GetAllPaidAsync();
+            var registrationsOfTeam = registrations.Where(r=> r.team.id == id).ToList();
+
             if (team == null)
             {
                 TempData["Message"] = $"Team {id} not found.";
                 return RedirectToAction("TeamList");
             }
-            if (!team.IsPaid && !User.HasClaim("IsAdmin", "true"))
+            if (registrationsOfTeam.Count == 0 && !User.HasClaim("IsAdmin", "true"))
                 return RedirectToAction("Denied", "Auth");
             return View(team);
         }

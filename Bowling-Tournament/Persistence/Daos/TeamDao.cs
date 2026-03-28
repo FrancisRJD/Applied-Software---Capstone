@@ -32,15 +32,13 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
 
             teamFound.TeamName = team.TeamName;
             teamFound.TeamDivision = team.TeamDivision;
-            teamFound.RegistrationPaid = team.RegistrationPaid;
-            teamFound.PaymentDate = team.PaymentDate;
 
             _db.SaveChanges();
         }
 
         public TeamV2 findTeam(TeamV2 team)
         {
-            return _db.Team.Find(team.TeamId) ?? new TeamV2();
+            return _db.Team.Find(team.TeamId) ?? new TeamV2 { TeamId = -1 };
         }
 
         /// <summary>
