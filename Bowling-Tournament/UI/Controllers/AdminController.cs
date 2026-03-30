@@ -37,8 +37,8 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         // TEAM REGISTRATION
         [HttpGet]
         public async Task<IActionResult> TeamRegistrationAdmin(string? filterBy, int? division, RegistrationStatus? paid, string? sortBy, string? order)
-            //Note to Nick when you see this-- basically I've converted this former team list into a registration list.
-            //Registrations are basically paid through this whereas the new team list handles creating new registrations
+        //Note to Nick when you see this-- basically I've converted this former team list into a registration list.
+        //Registrations are basically paid through this whereas the new team list handles creating new registrations
         {
             if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
 
@@ -48,7 +48,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
                 registrations = registrations.Where(t => t.team.teamDivision == division.Value).ToList();
 
             if (filterBy == "PaymentStatus" && paid.HasValue)
-                registrations = registrations.Where(t => t.registrationStatus == (RegistrationStatus) paid).ToList();
+                registrations = registrations.Where(t => t.registrationStatus == (RegistrationStatus)paid).ToList();
 
             bool descending = order == "desc";
             registrations = sortBy switch
@@ -71,7 +71,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
 
             if (filterBy == "Division" && division.HasValue)
                 teams = teams.Where(t => t.teamDivision == division.Value).ToList();
-            
+
             bool descending = order == "desc";
             teams = sortBy switch
             {
@@ -154,7 +154,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         }
 
         //DELETE REGISTRATION
-            //Put here for now as is as deleting registrations not *strictly* necessary yet.
+        //Put here for now as is as deleting registrations not *strictly* necessary yet.
         [HttpGet]
         public async Task<IActionResult> DeleteRegistration(int registrationId)
         {
@@ -286,11 +286,11 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
             if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
             if (!ModelState.IsValid) return View(vm);
 
-            var request = new TournamentRequest(0, vm.Name ?? "", 
-                vm.WatcherCapacity, 
-                vm.DateOfGame, 
-                vm.Location ?? "", 
-                vm.TeamCapacity, 
+            var request = new TournamentRequest(0, vm.Name ?? "",
+                vm.WatcherCapacity,
+                vm.DateOfGame,
+                vm.Location ?? "",
+                vm.TeamCapacity,
                 vm.RegistrationOpen);
             var result = _tournamentService.tryRegisterTournament(request);
 
@@ -333,11 +333,11 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
             if (!ModelState.IsValid) return View(vm);
 
             var request = new TournamentRequest(vm.Id,
-                vm.Name ?? "", 
-                vm.WatcherCapacity, 
-                vm.DateOfGame, 
-                vm.Location ?? "", 
-                vm.TeamCapacity, 
+                vm.Name ?? "",
+                vm.WatcherCapacity,
+                vm.DateOfGame,
+                vm.Location ?? "",
+                vm.TeamCapacity,
                 vm.RegistrationOpen);
             var result = _tournamentService.tryUpdateTournament(request);
 
@@ -411,6 +411,28 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
                 return View(vm);
             }
             return RedirectToAction("EditTeam", new { id = vm.TeamId });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ViewWaitlist(int tournamentId)
+        {
+            if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
+
+            var waitlistRegistrations = await _registrationGateway.GetWaitlistedByTournamentAsync(tournamentId);
+
+            if (waitlistRegistrations == null || waitlistRegistrations.Count == 0)
+            {
+                TempData["Message"] = "No teams are currently waitlisted for this tournament.";
+                return RedirectToAction("ViewTournaments", "Home");
+            }
+
+            ViewData["TournamentId"] = tournamentId;
+            if (waitlistRegistrations.Count > 0)
+            {
+                ViewData["TournamentName"] = waitlistRegistrations[0].tournament.tournamentName;
+            }
+
+            return View(waitlistRegistrations);
         }
     }
 }

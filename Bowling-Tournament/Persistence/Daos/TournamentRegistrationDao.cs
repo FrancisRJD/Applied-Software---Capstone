@@ -44,6 +44,23 @@ namespace bowling_tournament_MVCPRoject.Persistence.Daos
                 .ToList();
         }
 
+        public List<Registration> getRegistrationsByTournamentAndStatus(int tournamentId, RegistrationStatus status)
+        {
+            return _db.Registration
+                .Where(r => r.TournamentId == tournamentId)
+                .Where(r => r.Status == status)
+                .Select(tr => new Registration
+                {
+                    RegistrationId = tr.RegistrationId,
+                    TournamentId = tr.TournamentId,
+                    TeamId = tr.TeamId,
+                    RegisteredOn = tr.RegisteredOn,
+                    Status = tr.Status,
+                    StatusDate = tr.StatusDate
+                })
+                .ToList();
+        }
+
         public List<Registration> getRegistrationsByStatus(int status)
         {
 
