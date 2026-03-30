@@ -4,6 +4,7 @@
         //I've decided to make RegistrationStatus into an enum instead of a bool incase status needs to be expanded on!
     {
         OnHold = 0,
-        Registered = 1
+        Registered = 1,
+        Waitlisted = 2
     }
 }

@@ -12,6 +12,8 @@ namespace bowling_tournament_MVCPRoject.UI.Queries
 
         Task<RegistrationListItem?> GetByIdAsync(int id);
 
+        Task<List<RegistrationListItem>> GetWaitlistedByTournamentAsync(int tournamentId);
+
         //Task<List<Registration>> GetByTeam(TeamV2 team);
     }
 }
