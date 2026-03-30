@@ -197,12 +197,6 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
                 result.Errors.Add("Tournament not found.");
                 return result;
             }
-            var currentRegistrations = _registrationDao.getRegistrationsByTournament(request.TournamentId);
-            if (currentRegistrations.Count >= tournament.TeamCapacity)
-            {
-                result.Errors.Add("This tournament has reached its team capacity.");
-                return result;
-            }
 
             //Rule: Tournament registration must be open
             if(!tournament.RegistrationOpen)
@@ -211,12 +205,15 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
                 return result;
             }
 
+            var currentRegistrations = _registrationDao.getRegistrationsByTournament(request.TournamentId);
+            var registrationStatus = currentRegistrations.Count >= tournament.TeamCapacity ? RegistrationStatus.Waitlisted : RegistrationStatus.Registered;
+
             var registration = new Registration
             {
                 TeamId = request.TeamId,
                 TournamentId = request.TournamentId,
                 RegisteredOn = DateTime.Now,
-                Status = RegistrationStatus.Registered,
+                Status = registrationStatus,
                 StatusDate = DateTime.Now
             };
             _registrationDao.addRegistration(registration);

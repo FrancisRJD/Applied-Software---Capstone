@@ -80,12 +80,15 @@
                                 case RegistrationStatus.Registered:
                                     <td>Paid, Registered</td>
                                     break;
+                                case RegistrationStatus.Waitlisted:
+                                    <td>Paid, Waitlisted</td>
+									break;
                                 default:
                                     <td>(CASE MISSING FOR STATUS @registration.registrationStatus.ToString() )</td>
                                     break;
                             }
                             <td>
-                                @registration.statusDate
+                                @registration.statusDate.ToString("yyyy-MM-dd")
                             </td>
                             <td>
                                 <a class="btn-primary btn" asp-action="DetailsAdmin" asp-route-id="@registration.team.id"><i class="bi bi-search"></i> View Team</a>

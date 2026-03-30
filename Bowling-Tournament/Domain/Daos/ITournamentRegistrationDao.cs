@@ -17,6 +17,7 @@ namespace bowling_tournament_MVCPRoject.Domain.Daos
 
         public Registration? findRegistrationbyTeamAndTournament(int teamId, int tournamentId);
         public List<Registration> getRegistrationsByTournament(int tournamentId);
+        public List<Registration> getRegistrationsByTournamentAndStatus(int tournamentId, RegistrationStatus status);
         public void updateRegistration(Registration registration);
         public void addRegistration(Registration registration);
         public void removeRegistration(Registration registration);

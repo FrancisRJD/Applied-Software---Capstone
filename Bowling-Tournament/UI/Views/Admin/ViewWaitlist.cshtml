@@ -1,0 +1,49 @@
+﻿@using bowling_tournament_MVCPRoject.Domain.Entities
+@model List<bowling_tournament_MVCPRoject.UI.ReadModels.RegistrationListItem>
+@{
+	ViewData["Title"] = "Waitlist - Admin View";
+	var tournamentName = (string?)ViewData["TournamentName"] ?? "Tournament";
+}
+
+<div class="text-center justify-content-center row">
+	<h3>The NBCC Bowling League</h3>
+	<h4>Waitlist for @tournamentName</h4>
+	
+	<p><a class="btn-primary btn" asp-controller="Home" asp-action="ViewTournaments">Return to Tournaments</a></p>
+
+	@if (Model == null || Model.Count == 0)
+	{
+		<div class="alert alert-info mt-3">There are currently no teams on the waitlist for this tournament.</div>
+	}
+	else
+	{
+		<div style="max-width: 800px; margin: 0 auto;">
+			<table class="table table-striped">
+				<thead class="table-dark">
+					<tr>
+						<th>Position</th>
+						<th>Team Name</th>
+						<th>Division</th>
+						<th>On Waitlist Since</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					@for (int i = 0; i < Model.Count; i++)
+					{
+						var registration = Model[i];
+						<tr>
+							<td>@(i + 1)</td>
+							<td>@registration.team.teamName</td>
+							<td>@registration.team.divisionName</td>
+							<td>@registration.registeredOn.ToString("yyyy-MM-dd")</td>
+							<td>
+								<a class="btn-primary btn btn-sm" asp-action="DetailsAdmin" asp-route-id="@registration.team.id"><i class="bi bi-search"></i> View Team</a>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	}
+</div>

@@ -35,8 +35,7 @@ namespace bowling_tournament_MVCPRoject.Persistence
                 .HasIndex(x => x.PlayerId)
                 .IsUnique();
             modelBuilder.Entity<Registration>()
-                .HasIndex(x => x.TournamentId)
-                .IsUnique();
+                .HasIndex(x => x.TournamentId);
             modelBuilder.Entity<TeamV2>()
                 .HasIndex(x => x.TeamId)
                 .IsUnique();
@@ -62,6 +61,7 @@ namespace bowling_tournament_MVCPRoject.Persistence
                 .HasOne<Division>()
                 .WithMany()
                 .HasForeignKey(t => t.TeamDivision)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Team_Division");
             modelBuilder.Entity<Division>()
                 .Ignore(d => d.Teams);
