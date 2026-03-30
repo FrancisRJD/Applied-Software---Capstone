@@ -25,16 +25,13 @@ CREATE TABLE "Player" (
 	FOREIGN KEY("TeamId") REFERENCES "Team"("TeamId") ON DELETE CASCADE
 );
 
-CREATE TABLE "Registration" (
-	"RegistrationId"	INTEGER,
-	"TournamentId"	INTEGER NOT NULL,
-	"TeamId"	INTEGER NOT NULL,
-	"RegisteredOn"	TEXT NOT NULL,
-	"Status"	INTEGER NOT NULL CHECK("Status" IN (0, 1)),
-	"StatusDate"	TEXT NOT NULL,
-	PRIMARY KEY("RegistrationId"),
-	FOREIGN KEY("TeamId") REFERENCES "Team"("TeamId") ON DELETE CASCADE,
-	FOREIGN KEY("TournamentId") REFERENCES "Tournament"("TournamentId") ON DELETE CASCADE
+CREATE TABLE Registration (
+    RegistrationId INTEGER PRIMARY KEY,
+    TournamentId INTEGER NOT NULL,
+    TeamId INTEGER NOT NULL,
+    RegisteredOn TEXT NOT NULL,
+    Status INTEGER NOT NULL,
+    StatusDate TEXT NOT NULL
 );
 
 CREATE TABLE "Team" (
