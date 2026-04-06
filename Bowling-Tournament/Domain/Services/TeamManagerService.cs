@@ -231,6 +231,17 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
                 request.TournamentId
             );
 
+            var waitlist = _registrationDao.getRegistrationsByTournamentAndStatus(request.TournamentId, RegistrationStatus.Waitlisted);
+            waitlist.Sort((a, b) => b.RegisteredOn.CompareTo(a.RegisteredOn));
+                //Sort waitlist from oldest waitlist to youngest
+            
+            var pendingRegistration = waitlist.FirstOrDefault();
+            if (pendingRegistration != null) {
+                pendingRegistration.Status = RegistrationStatus.Registered;
+                pendingRegistration.StatusDate = DateTime.Now;
+                _registrationDao.updateRegistration(pendingRegistration);
+            }
+
             if (registration == null || registration.RegistrationId == 0)
             {
                 result.Errors.Add("Registration not found.");
