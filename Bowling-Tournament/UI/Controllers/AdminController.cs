@@ -156,18 +156,25 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         //DELETE REGISTRATION
         //Put here for now as is as deleting registrations not *strictly* necessary yet.
         [HttpGet]
-        public async Task<IActionResult> DeleteRegistration(int registrationId)
+        public async Task<IActionResult> DeleteRegistration(int registrationId, int teamId, int tournamentId)
         {
             if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
             var registration = await _registrationGateway.GetByIdAsync(registrationId);
             if (registration == null) return NotFound();
-            return View("DeleteRegistration", registration);
+
+            var result = _teamService.tryCancelRegistration(new RegisterTeamRequest(registrationId, teamId, tournamentId));
+            if (!result.success) TempData["Message"] = "Something went wrong during cancellation, please try again";
+            else TempData["Message"] = $"Team unregistered from tournament ID {tournamentId}";
+            return RedirectToAction("TeamRegistrationAdmin");
         }
 
         [HttpPost]
         public IActionResult DeleteRegistrationConfirmed(int registrationId)
         {
             if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
+
+
+
             return RedirectToAction("TeamRegistrationAdmin");
         }
 
