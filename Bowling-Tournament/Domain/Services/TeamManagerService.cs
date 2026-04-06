@@ -220,5 +220,26 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
             result.success = true;
             return result;
         }
+
+        // Cancel registration
+        public RegisterTeamResult tryCancelRegistration(RegisterTeamRequest request)
+        {
+            var result = new RegisterTeamResult();
+
+            var registration = _registrationDao.findRegistrationbyTeamAndTournament(
+                request.TeamId,
+                request.TournamentId
+            );
+
+            if (registration == null || registration.RegistrationId == 0)
+            {
+                result.Errors.Add("Registration not found.");
+                return result;
+            }
+
+            _registrationDao.removeRegistration(registration);
+            result.success = true;
+            return result;
+        }
     }
 }
