@@ -236,7 +236,8 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
                 //Sort waitlist from oldest waitlist to youngest
             
             var pendingRegistration = waitlist.FirstOrDefault();
-            if (pendingRegistration != null) {
+            if (pendingRegistration != null && registration.Status == RegistrationStatus.Registered) {
+                //IF there is a registration AND cancelled registration is actually registered (NOT waitlisted)
                 pendingRegistration.Status = RegistrationStatus.Registered;
                 pendingRegistration.StatusDate = DateTime.Now;
                 _registrationDao.updateRegistration(pendingRegistration);
