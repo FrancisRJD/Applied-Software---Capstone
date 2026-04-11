@@ -30,7 +30,12 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
                 TournamentDate = request.DateOfGame,
                 Location = request.Location.Trim(),
                 TeamCapacity = request.TeamCapacity,
-                RegistrationOpen = request.RegistrationOpen
+                RegistrationOpen = request.RegistrationOpen,
+                MensCapacity = request.MensCapacity,
+                WomensCapacity = request.WomensCapacity,
+                MixedCapacity = request.MixedCapacity,
+                YouthCapacity = request.YouthCapacity,
+                SeniorCapacity = request.SeniorCapacity
             };
 
             _tournamentDao.addTournament(tournament);
@@ -65,6 +70,12 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
             existingTournament.Location = request.Location.Trim();
             existingTournament.TeamCapacity = request.TeamCapacity;
             existingTournament.RegistrationOpen = request.RegistrationOpen;
+
+            existingTournament.MensCapacity = request.MensCapacity;
+            existingTournament.WomensCapacity = request.WomensCapacity;
+            existingTournament.MixedCapacity = request.MixedCapacity;
+            existingTournament.YouthCapacity = request.YouthCapacity;
+            existingTournament.SeniorCapacity = request.SeniorCapacity;
 
             _tournamentDao.saveChanges();
 

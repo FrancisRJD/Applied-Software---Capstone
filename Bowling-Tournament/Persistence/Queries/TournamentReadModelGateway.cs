@@ -25,6 +25,11 @@ namespace bowling_tournament_MVCPRoject.Persistence.Queries
                      teamCapacity = t.TeamCapacity,
                      watcherCapacity = t.WatcherCapacity,
                      registrationOpen = t.RegistrationOpen,
+                     menCapacity = t.MensCapacity,
+                     womenCapacity = t.WomensCapacity,
+                     mixedCapacity = t.MixedCapacity,
+                     youthCapacity = t.YouthCapacity,
+                     seniorCapacity = t.SeniorCapacity,
                  }
                 ).ToListAsync();
         }
