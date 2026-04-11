@@ -1,17 +1,16 @@
 BEGIN TRANSACTION;
 
 /*
-	Restructured database with new tournaments and registration tables
-		Payments are set up to be on a per-registration instead of a per-team basis.
-		Not all teams have been registered with a tournament
-		Not all registrations have been paid
-		Only the OG tournament is marked as open to registrations
+	In the process of re-making this SQL rebuild file, but currently will 
 */
 
 DROP TABLE IF EXISTS Player;
 DROP TABLE IF EXISTS Registration;
 DROP TABLE IF EXISTS Team;
 DROP TABLE IF EXISTS Tournament;
+DROP TABLE IF EXISTS BowlingUser;
+DROP TABLE IF EXISTS Division;
+DROP TABLE IF EXISTS DivisionCapacity;
 
 CREATE TABLE "Player" (
 	"PlayerId"	INTEGER,
@@ -25,20 +24,24 @@ CREATE TABLE "Player" (
 	FOREIGN KEY("TeamId") REFERENCES "Team"("TeamId") ON DELETE CASCADE
 );
 
-CREATE TABLE Registration (
-    RegistrationId INTEGER PRIMARY KEY,
-    TournamentId INTEGER NOT NULL,
-    TeamId INTEGER NOT NULL,
-    RegisteredOn TEXT NOT NULL,
-    Status INTEGER NOT NULL,
-    StatusDate TEXT NOT NULL
+CREATE TABLE "Registration" (
+	"RegistrationId"	INTEGER,
+	"TournamentId"	INTEGER NOT NULL,
+	"TeamId"	INTEGER NOT NULL,
+	"RegisteredOn"	TEXT NOT NULL,
+	"Status"	INTEGER NOT NULL,
+	"StatusDate"	TEXT NOT NULL,
+	PRIMARY KEY("RegistrationId")
 );
 
 CREATE TABLE "Team" (
 	"TeamId"	INTEGER,
 	"TeamName"	TEXT NOT NULL,
 	"DivisionId"	INTEGER NOT NULL,
-	PRIMARY KEY("TeamId")
+	"RegistrationPaid"	INTEGER NOT NULL DEFAULT 0,
+	"PaymentDate"	TEXT,
+	PRIMARY KEY("TeamId"),
+	FOREIGN KEY("DivisionId") REFERENCES "Division"("DivisionId")
 );
 
 CREATE TABLE "Tournament" (
@@ -52,6 +55,46 @@ CREATE TABLE "Tournament" (
 	PRIMARY KEY("TournamentId")
 );
 
+CREATE TABLE "Division" (
+	"DivisionId"	INTEGER,
+	"DivisionName"	TEXT NOT NULL,
+	PRIMARY KEY("DivisionId")
+);
+
+CREATE TABLE "BowlingUser" (
+	"UserId"	INTEGER,
+	"UserName"	TEXT NOT NULL,
+	"PasswordHash"	TEXT NOT NULL,
+	"IsAdmin"	INTEGER NOT NULL CHECK("IsAdmin" IN (0, 1)),
+	PRIMARY KEY("UserId")
+);
+
+CREATE TABLE "DivisionCapacity" (
+	"CapacityId"	INTEGER,
+	"TournamentId"	INTEGER NOT NULL,
+	"DivisionId"	INTEGER NOT NULL,
+	"Capacity"	INTEGER NOT NULL,
+	PRIMARY KEY("CapacityId"),
+	FOREIGN KEY("DivisionId") REFERENCES "Division"("DivisionId") ON DELETE CASCADE,
+	FOREIGN KEY("TournamentId") REFERENCES "Tournament"("TournamentId") ON DELETE CASCADE
+);
+
+CREATE INDEX "IX_Registration_TournamentId" ON "Registration" (
+	"TournamentId"
+);
+
+-- User: smonk, Pass: password
+INSERT INTO BowlingUser VALUES (1, 'smonk', 'AQAAAAIAAYagAAAAEO9Y2ksEbq8zlwhDez8JSPX9nbCnvBDemKDlqfOjTgYqQcil8QExgZxw3SfUalDE0Q==', 1);
+
+INSERT INTO Division VALUES (1, 'Mens');
+INSERT INTO Division VALUES (2, 'Womens');
+INSERT INTO Division VALUES (3, 'Mixed');
+INSERT INTO Division VALUES (4, 'Youth');
+INSERT INTO Division VALUES (5, 'Senior');
+
+COMMIT;
+--NOT UPDATED FOR NEW DATABASE STRUCTURE, DO NOT COPY BELOW
+/*
 --Team records
 insert into Team values (1, 'Holy Rollers', 4);
 insert into Team values (2, 'Jesus Take the Ball', 1);
@@ -355,5 +398,4 @@ insert into Registration values (41, 1, 44, '2025-10-12', 1, '2025-10-25');
 insert into Registration values (42, 1, 45, '2025-10-12', 1, '2025-10-25');
 insert into Registration values (43, 1, 46, '2025-10-12', 0, '2025-10-25');
 insert into Registration values (44, 1, 47, '2025-10-12', 0, '2025-10-25');
-
-COMMIT;
+*/
