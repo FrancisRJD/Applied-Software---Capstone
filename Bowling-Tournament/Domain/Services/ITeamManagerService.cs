@@ -8,7 +8,10 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
     {
         //TEAM-SPECIFIC
         RegisterTeamResult tryRegisterTeam(RegisterTeamRequest request);
-            //Request contains registration details (TeamID, tournamentID)
+        //Request contains registration details (TeamID, tournamentID)
+
+        // Cancel
+        RegisterTeamResult tryCancelRegistration(RegisterTeamRequest request);
 
         TeamResult tryCreateTeam(TeamRequest request); 
             //Request contains ALL team details and 4 players. Does not contain a teamID (Since team will be assigned one)
