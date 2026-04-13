@@ -29,7 +29,7 @@ namespace bowling_tournament_MVCPRoject.Persistence.Queries
                      womenCapacity = t.WomensCapacity,
                      mixedCapacity = t.MixedCapacity,
                      youthCapacity = t.YouthCapacity,
-                     seniorCapacity = t.SeniorCapacity,
+                     seniorCapacity = t.SeniorCapacity
                  }
                 ).ToListAsync();
         }
@@ -58,7 +58,12 @@ namespace bowling_tournament_MVCPRoject.Persistence.Queries
                     location = t.Location,
                     teamCapacity = t.TeamCapacity,
                     watcherCapacity = t.WatcherCapacity,
-                    registrationOpen = t.RegistrationOpen
+                    registrationOpen = t.RegistrationOpen,
+                    menCapacity = t.MensCapacity,
+                    womenCapacity = t.WomensCapacity,
+                    mixedCapacity = t.MixedCapacity,
+                    youthCapacity = t.YouthCapacity,
+                    seniorCapacity = t.SeniorCapacity
                 })
                 .FirstOrDefaultAsync();
         }
