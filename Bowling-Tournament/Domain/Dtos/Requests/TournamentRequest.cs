@@ -22,7 +22,12 @@
             DateTime DateOfGame,
             string location,
             int teamCapacity,
-            bool registrationOpen
+            bool registrationOpen,
+            int mensCapacity,
+            int womensCapacity,
+            int mixedCapacity,
+            int youthCapacity,
+            int seniorCapacity
             ) {
             this.Id = id;
             this.Name = name;
@@ -31,6 +36,11 @@
             this.Location = location;
             this.TeamCapacity = teamCapacity;
             this.RegistrationOpen = registrationOpen;
+            this.MensCapacity = mensCapacity;
+            this.WomensCapacity = womensCapacity;
+            this.MixedCapacity = mixedCapacity;
+            this.YouthCapacity = youthCapacity;
+            this.SeniorCapacity = seniorCapacity;
         }
     }
 }

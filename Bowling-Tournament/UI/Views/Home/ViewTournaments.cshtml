@@ -13,7 +13,8 @@
 			<thead>
 				<tr>
 					<th>Tournament</th>
-					<th></th>
+					<th>Tournament Team Capacities</th>
+					<th>Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -21,6 +22,17 @@
 				{
 					<tr>
 						<td>@tournament.tournamentName</td>
+
+						<td>
+							<ul class="list-unstyled">
+								<li>Men: @tournament.menCapacity</li>
+								<li>Women: @tournament.womenCapacity</li>
+								<li>Mixed: @tournament.mixedCapacity</li>
+								<li>Youth: @tournament.youthCapacity</li>
+								<li>Senior: @tournament.seniorCapacity</li>
+							</ul>
+						</td>
+
 						<td>
 							<a class="btn-primary btn" asp-action="TournamentDetails" asp-route-id="@tournament.id"><i class="bi bi-search"></i> View</a>
 							@if (User.Identity != null && User.Identity.IsAuthenticated)
