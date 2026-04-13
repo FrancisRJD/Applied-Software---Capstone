@@ -184,7 +184,7 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
 
             var existingReg = _registrationDao.findRegistrationbyTeamAndTournament(request.TeamId, request.TournamentId);
             // Rule: team cannot register twice
-            if (existingReg != null)
+            if (existingReg != null && existingReg.RegistrationId != 0)
             {
                 result.Errors.Add("This team is already registered for this tournament.");
                 return result;
@@ -206,7 +206,21 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
             }
 
             var currentRegistrations = _registrationDao.getRegistrationsByTournament(request.TournamentId);
-            var registrationStatus = currentRegistrations.Count >= tournament.TeamCapacity ? RegistrationStatus.Waitlisted : RegistrationStatus.Registered;
+            var registeredRegistrations = currentRegistrations
+                .Where(r => r.Status == RegistrationStatus.Registered)
+                .ToList();
+
+            int overallRegisteredCount = registeredRegistrations.Count;
+            int sameDivisionRegisteredCount = getRegisteredCountForDivision(registeredRegistrations, existingTeam.TeamDivision);
+            int divisionCapacity = getDivisionCapacity(tournament, existingTeam.TeamDivision);
+
+            bool overallHasRoom = overallRegisteredCount < tournament.TeamCapacity;
+            bool divisionHasRoom = divisionCapacity == -1 || sameDivisionRegisteredCount < divisionCapacity;
+
+            var registrationStatus =
+                (overallHasRoom && divisionHasRoom)
+                    ? RegistrationStatus.Registered
+                    : RegistrationStatus.Waitlisted;
 
             var registration = new Registration
             {
@@ -231,27 +245,124 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
                 request.TournamentId
             );
 
-            var waitlist = _registrationDao.getRegistrationsByTournamentAndStatus(request.TournamentId, RegistrationStatus.Waitlisted);
-            waitlist.Sort((a, b) => b.RegisteredOn.CompareTo(a.RegisteredOn));
-                //Sort waitlist from oldest waitlist to youngest
-            
-            var pendingRegistration = waitlist.FirstOrDefault();
-            if (pendingRegistration != null && registration.Status == RegistrationStatus.Registered) {
-                //IF there is a registration AND cancelled registration is actually registered (NOT waitlisted)
-                pendingRegistration.Status = RegistrationStatus.Registered;
-                pendingRegistration.StatusDate = DateTime.Now;
-                _registrationDao.updateRegistration(pendingRegistration);
-            }
-
             if (registration == null || registration.RegistrationId == 0)
             {
                 result.Errors.Add("Registration not found.");
                 return result;
             }
 
+            bool cancelledWasRegistered = registration.Status == RegistrationStatus.Registered;
+
+            var cancelledTeam = _teamDao.findTeam(new TeamV2 { TeamId = registration.TeamId });
+            int cancelledDivisionId = cancelledTeam != null ? cancelledTeam.TeamDivision : -1;
+            var tournament = _tournamentDao.findTournament(new Tournament { TournamentId = request.TournamentId });
+
+            var waitlist = _registrationDao.getRegistrationsByTournamentAndStatus(request.TournamentId, RegistrationStatus.Waitlisted);
+
+            waitlist.Sort((a, b) => a.RegisteredOn.CompareTo(b.RegisteredOn));
+            //Sort waitlist from oldest waitlist to youngest
+
+            Registration pendingRegistration = null;
+
+            if (cancelledWasRegistered)
+            {
+                var allRegistrations = _registrationDao.getRegistrationsByTournament(request.TournamentId);
+                var registeredRegistrations = allRegistrations
+                    .Where(r => r.Status == RegistrationStatus.Registered && r.RegistrationId != registration.RegistrationId)
+                    .ToList();
+
+                foreach (var waitlistedRegistration in waitlist)
+                {
+                    var waitlistedTeam = _teamDao.findTeam(new TeamV2 { TeamId = waitlistedRegistration.TeamId });
+
+                    if (waitlistedTeam.TeamDivision != cancelledDivisionId)
+                        continue;
+
+                    int divisionCapacity = getDivisionCapacity(tournament, waitlistedTeam.TeamDivision);
+                    int currentDivisionRegistered = getRegisteredCountForDivision(registeredRegistrations, waitlistedTeam.TeamDivision);
+
+                    bool divisionHasRoom = divisionCapacity == -1 || currentDivisionRegistered < divisionCapacity;
+
+                    if (divisionHasRoom)
+                    {
+                        pendingRegistration = waitlistedRegistration;
+                        break;
+                    }
+                }
+
+                // If none from same division, take oldest waitlisted from any division that has room
+                if (pendingRegistration == null)
+                {
+                    foreach (var waitlistedRegistration in waitlist)
+                    {
+                        var waitlistedTeam = _teamDao.findTeam(new TeamV2 { TeamId = waitlistedRegistration.TeamId });
+
+                        int divisionCapacity = getDivisionCapacity(tournament, waitlistedTeam.TeamDivision);
+                        int currentDivisionRegistered = getRegisteredCountForDivision(registeredRegistrations, waitlistedTeam.TeamDivision);
+
+                        bool divisionHasRoom = divisionCapacity == -1 || currentDivisionRegistered < divisionCapacity;
+
+                        if (divisionHasRoom)
+                        {
+                            pendingRegistration = waitlistedRegistration;
+                            break;
+                        }
+                    }
+                }
+
+                if (pendingRegistration != null)
+                {
+                    pendingRegistration.Status = RegistrationStatus.Registered;
+                    pendingRegistration.StatusDate = DateTime.Now;
+                    _registrationDao.updateRegistration(pendingRegistration);
+                }
+            }
+
+            //if (registration == null || registration.RegistrationId == 0)
+            //{
+            //    result.Errors.Add("Registration not found.");
+            //    return result;
+            //}
+
             _registrationDao.removeRegistration(registration);
             result.success = true;
             return result;
+        }
+
+        private int getRegisteredCountForDivision(List<Registration> registeredRegistrations, int divisionId)
+        {
+            int count = 0;
+
+            foreach (var registration in registeredRegistrations)
+            {
+                var team = _teamDao.findTeam(new TeamV2 { TeamId = registration.TeamId });
+
+                if (team != null && team.TeamId != 0 && team.TeamDivision == divisionId)
+                {
+                    count++;
+                }
+            }
+
+            return count;
+        }
+
+        private int getDivisionCapacity(Tournament tournament, int divisionId)
+        {
+            switch (divisionId)
+            {
+                case 1:
+                    return tournament.MensCapacity;
+                case 2:
+                    return tournament.WomensCapacity;
+                case 3:
+                    return tournament.MixedCapacity;
+                case 4:
+                    return tournament.YouthCapacity;
+                case 5:
+                    return tournament.SeniorCapacity;
+                default:
+                    return -1;
+            }
         }
     }
 }
