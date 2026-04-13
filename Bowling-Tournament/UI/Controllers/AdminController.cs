@@ -298,7 +298,12 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
                 vm.DateOfGame,
                 vm.Location ?? "",
                 vm.TeamCapacity,
-                vm.RegistrationOpen);
+                vm.RegistrationOpen,
+                vm.MenCapacity,
+                vm.WomenCapacity,
+                vm.MixedCapacity,
+                vm.YouthCapacity,
+                vm.SeniorCapacity);
             var result = _tournamentService.tryRegisterTournament(request);
 
             if (!result.success)
@@ -328,7 +333,12 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
                 DateOfGame = tournament.tournamentDate,
                 TeamCapacity = tournament.teamCapacity,
                 WatcherCapacity = tournament.watcherCapacity,
-                RegistrationOpen = tournament.registrationOpen
+                RegistrationOpen = tournament.registrationOpen,
+                MenCapacity = tournament.menCapacity,
+                WomenCapacity = tournament.womenCapacity,
+                MixedCapacity = tournament.mixedCapacity,
+                YouthCapacity = tournament.youthCapacity,
+                SeniorCapacity = tournament.seniorCapacity
             };
             return View(vm);
         }
@@ -345,7 +355,12 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
                 vm.DateOfGame,
                 vm.Location ?? "",
                 vm.TeamCapacity,
-                vm.RegistrationOpen);
+                vm.RegistrationOpen,
+                vm.MenCapacity,
+                vm.WomenCapacity,
+                vm.MixedCapacity,
+                vm.YouthCapacity,
+                vm.SeniorCapacity);
             var result = _tournamentService.tryUpdateTournament(request);
 
             if (!result.success)
