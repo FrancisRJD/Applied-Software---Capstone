@@ -43,6 +43,9 @@ namespace bowling_tournament_MVCPRoject
             builder.Services.AddScoped<IAuthReadModelGateway, AuthReadModelGateway>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<ITournamentReadModelGateway, TournamentReadModelGateway>();
+            builder.Services.AddScoped<IUserAuthorizationService, UserAuthorizationService>();
+            builder.Services.AddScoped<ISummaryService, SummaryService>();
+            builder.Services.AddScoped<IViewModelMapper, ViewModelMapper>();
 
             builder.Services.AddAuthentication("app-cookie")
             .AddCookie("app-cookie", options =>

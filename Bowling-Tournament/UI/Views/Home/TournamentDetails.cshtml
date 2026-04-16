@@ -1,36 +1,84 @@
-﻿@model bowling_tournament_MVCPRoject.UI.ReadModels.TournamentListItem
-
+﻿@using bowling_tournament_MVCPRoject.Domain.Entities
+@model bowling_tournament_MVCPRoject.UI.ViewModels.TournamentDetailsVm
 @{
-    ViewData["Title"] = "Tournament Details";
+	ViewData["Title"] = "Tournament Details";
 }
 
 <div class="justify-content-center row">
-    <div class="col-10">
-        <div class="card">
-            <div class="card-header">
-                <h3>@Model.tournamentName</h3>
-            </div>
-            <div class="card-body">
-                <ul class="list-unstyled">
-                    <li>
-                        <h4 class="pt-2">Date: @Model.tournamentDate</h4>
-                    </li>
-                    <li>
-                        <h4 class="pt-2">Location: @Model.location</h4>
-                    </li>
-                    <li>
-                        <h4 class="pt-2">Team Capacity: @Model.teamCapacity</h4>
-                    </li>
-                    <li>
-                        <h4 class="pt-2">Audiance Capacity: @Model.watcherCapacity</h4>
-                    </li>
-                    <li>
-                        <h4 class="pt-2">Registration Open: @Model.registrationOpen</h4>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
+	<div class="col-10">
+		<div class="card">
+			<div class="card-header">
+				<h3>@Model.Tournament?.tournamentName</h3>
+			</div>
+			<div class="card-body">
+				<ul class="list-unstyled">
+					<li>
+						<h4 class="pt-2">Date: @Model.Tournament?.tournamentDate.ToString("yyyy-MM-dd")</h4>
+					</li>
+					<li>
+						<h4 class="pt-2">Location: @Model.Tournament?.location</h4>
+					</li>
+					<li>
+						<h4 class="pt-2">Team Capacity: @Model.Tournament?.teamCapacity</h4>
+					</li>
+					<li>
+						<h4 class="pt-2">Audiance Capacity: @Model.Tournament?.watcherCapacity</h4>
+					</li>
+					<li>
+						<h4 class="pt-2">Registration Open: @Model.Tournament?.registrationOpen</h4>
+					</li>
+				</ul>
+			</div>
+			@if (User.Identity != null && User.Identity.IsAuthenticated && Model.Registrations != null)
+			{
+				<div>
+					<table class="table table-responsive">
+						<thead>
+							<tr>
+								<th>Team</th>
+								<th>Status</th>
+								<th>Status Date</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var registration in Model.Registrations)
+							{
+								<tr>
+									<td>@registration.team.teamName</td>
+									@switch (registration.registrationStatus)
+									{
+										case RegistrationStatus.OnHold:
+											<td>Paid, On Hold</td>
+											break;
+										case RegistrationStatus.Registered:
+											<td>Paid, Registered</td>
+											break;
+										case RegistrationStatus.Waitlisted:
+											<td>Paid, Waitlisted</td>
+											break;
+										default:
+											<td>(CASE MISSING FOR STATUS @registration.registrationStatus.ToString() )</td>
+											break;
+									}
+									<td>
+										@registration.statusDate.ToString("yyyy-MM-dd")
+									</td>
+									<td>
+										<a class="btn-primary btn" asp-controller="Admin" asp-action="DetailsAdmin" asp-route-id="@registration.team.id"><i class="bi bi-search"></i>View Team</a>
+										<a class="btn-primary btn" asp-controller="Admin" asp-action="DeleteRegistration"
+										   asp-route-registrationId="@registration.id"
+										   asp-route-teamId="@registration.team.id"
+										   asp-route-tournamentId="@registration.tournament.id"><i class="bi bi-trash"></i>Cancel</a>
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			}
+		</div>
+	</div>
 
 
 </div>

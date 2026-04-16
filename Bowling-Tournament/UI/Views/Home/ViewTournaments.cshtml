@@ -1,49 +1,147 @@
-﻿@model List<bowling_tournament_MVCPRoject.UI.ReadModels.TournamentListItem>
+@model List<bowling_tournament_MVCPRoject.UI.ViewModels.TournamentWithCapacityVm>
 
 @{
 	ViewData["Title"] = "Tournaments";
 }
 
-<div class="text-center justify-content-center row">
-	<h3>The NBCC Bowling League</h3>
-	@foreach (var td in Model.GroupBy(td => td.tournamentDate))
-	{
-		<h4 class="align-middle">@td.Key</h4>
-		<table class="table table-responsive">
-			<thead>
-				<tr>
-					<th>Tournament</th>
-					<th>Tournament Team Capacities</th>
-					<th>Actions</th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (var tournament in Model.Where(t => t.tournamentDate == td.Key))
-				{
-					<tr>
-						<td>@tournament.tournamentName</td>
-
-						<td>
-							<ul class="list-unstyled">
-								<li>Men: @tournament.menCapacity</li>
-								<li>Women: @tournament.womenCapacity</li>
-								<li>Mixed: @tournament.mixedCapacity</li>
-								<li>Youth: @tournament.youthCapacity</li>
-								<li>Senior: @tournament.seniorCapacity</li>
-							</ul>
-						</td>
-
-						<td>
-							<a class="btn-primary btn" asp-action="TournamentDetails" asp-route-id="@tournament.id"><i class="bi bi-search"></i> View</a>
-							@if (User.Identity != null && User.Identity.IsAuthenticated)
-							{
-								<a class="btn-primary btn" asp-controller="Admin" asp-action="EditTournament" asp-route-id="@tournament.id"><i class="bi bi-pencil"></i> Edit</a>
-								<a class="btn-primary btn" asp-controller="Admin" asp-action="ViewWaitlist" asp-route-tournamentId="@tournament.id"><i class="bi bi-book"></i> View Waitlist</a>
-							}
-						</td>
-					</tr>
-				}
-			</tbody>
-		</table>
-	}
+<div class="row justify-content-center">
+	<div class="col-lg-12">
+		<h3>Tournament List</h3>
+		
+		@if (Model.Count == 0)
+		{
+			<div class="alert alert-info">
+				<i class="bi bi-info-circle"></i> No tournaments are currently scheduled.
+			</div>
+		}
+		else
+		{
+			@foreach (var td in Model.OrderBy(t => t.TournamentDate).GroupBy(td => td.TournamentDate))
+			{
+				<div class="mb-4">
+					<h4>
+						<i class="bi bi-calendar-event"></i> @td.Key.ToString("dddd, MMMM dd, yyyy")
+					</h4>
+					
+					<div class="table-responsive">
+						<table class="table table-hover">
+							<thead>
+								<tr>
+									<th style="width: 30%;">Tournament</th>
+									<th style="width: 40%;">Division Capacity (Remaining/Limit)</th>
+									<th style="width: 30%;">Actions</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var tournament in Model.Where(t => t.TournamentDate == td.Key))
+								{
+									<tr>
+										<td class="align-middle">
+											<strong>@tournament.TournamentName</strong>
+											<br />
+											<small class="text-muted">
+												<i class="bi bi-geo-alt"></i> @tournament.Location
+											</small>
+											<br />
+											<small class="text-muted" style="display: block; margin-top: 0.5rem;">
+												<i class="bi bi-people"></i> Overall: <strong>@tournament.TeamRemaining/@tournament.TeamCapacity</strong> teams
+											</small>
+										</td>
+										<td class="align-middle">
+											<div class="capacity-list">
+												<div class="capacity-item">
+													<small>
+														Men: 
+														@if (tournament.MenCapacity == -1)
+														{
+															<span class="capacity-unlimited">Unlimited</span>
+														}
+														else
+														{
+															<span class="capacity-item">@tournament.MenRemaining/@tournament.MenCapacity</span>
+														}
+													</small>
+												</div>
+												<div class="capacity-item">
+													<small>
+														Women: 
+														@if (tournament.WomenCapacity == -1)
+														{
+															<span class="capacity-unlimited">Unlimited</span>
+														}
+														else
+														{
+															<span class="capacity-item">@tournament.WomenRemaining/@tournament.WomenCapacity</span>
+														}
+													</small>
+												</div>
+												<div class="capacity-item">
+													<small>
+														Mixed: 
+														@if (tournament.MixedCapacity == -1)
+														{
+															<span class="capacity-unlimited">Unlimited</span>
+														}
+														else
+														{
+															<span class="capacity-item">@tournament.MixedRemaining/@tournament.MixedCapacity</span>
+														}
+													</small>
+												</div>
+												<div class="capacity-item">
+													<small>
+														Youth: 
+														@if (tournament.YouthCapacity == -1)
+														{
+															<span class="capacity-unlimited">Unlimited</span>
+														}
+														else
+														{
+															<span class="capacity-item">@tournament.YouthRemaining/@tournament.YouthCapacity</span>
+														}
+													</small>
+												</div>
+												<div class="capacity-item">
+													<small>
+														Senior: 
+														@if (tournament.SeniorCapacity == -1)
+														{
+															<span class="capacity-unlimited">Unlimited</span>
+														}
+														else
+														{
+															<span class="capacity-item">@tournament.SeniorRemaining/@tournament.SeniorCapacity</span>
+														}
+													</small>
+												</div>
+											</div>
+										</td>
+										<td class="align-middle">
+											<div class="btn-group-compact">
+												<a class="btn btn-sm btn-primary" asp-action="TournamentDetails" asp-route-id="@tournament.Id" title="View tournament details">
+													<i class="bi bi-search"></i> View
+												</a>
+												@if (User.Identity != null && User.Identity.IsAuthenticated)
+												{
+													<a class="btn btn-sm btn-primary" asp-controller="Admin" asp-action="EditTournament" asp-route-id="@tournament.Id" title="Edit tournament">
+														<i class="bi bi-pencil"></i> Edit
+													</a>
+													<a class="btn btn-sm btn-primary" asp-controller="Admin" asp-action="ViewWaitlist" asp-route-tournamentId="@tournament.Id" title="View waitlist">
+														<i class="bi bi-book"></i> Waitlist
+													</a>
+													<a class="btn btn-sm btn-danger" asp-controller="Admin" asp-action="DeleteTournament" asp-route-id="@tournament.Id" title="Delete tournament">
+														<i class="bi bi-trash"></i> Delete
+													</a>
+												}
+											</div>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			}
+		}
+	</div>
 </div>

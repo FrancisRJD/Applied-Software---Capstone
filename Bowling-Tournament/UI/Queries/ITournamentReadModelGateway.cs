@@ -1,4 +1,5 @@
 ﻿using bowling_tournament_MVCPRoject.UI.ReadModels;
+using bowling_tournament_MVCPRoject.UI.ViewModels;
 
 namespace bowling_tournament_MVCPRoject.UI.Queries
 {
@@ -8,5 +9,6 @@ namespace bowling_tournament_MVCPRoject.UI.Queries
         Task<List<TournamentListItem>> GetAllAsync();
         Task<List<TournamentOptions>> GetTournamentOptionsAsync();
         Task<TournamentListItem?> GetByIdAsync(int id);
+        Task<List<TournamentWithCapacityVm>> GetAllWithCapacityAsync();
     }
 }

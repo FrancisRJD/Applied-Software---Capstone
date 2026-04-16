@@ -38,7 +38,7 @@
 							<td>@registration.team.divisionName</td>
 							<td>@registration.registeredOn.ToString("yyyy-MM-dd")</td>
 							<td>
-								<a class="btn-primary btn btn-sm" asp-action="DetailsAdmin" asp-route-id="@registration.team.id"><i class="bi bi-search"></i> View Team</a>
+								<a class="btn-primary btn btn-sm" asp-controller="Admin" asp-action="DetailsAdmin" asp-route-id="@registration.team.id"><i class="bi bi-search"></i> View Team</a>
 							</td>
 						</tr>
 					}

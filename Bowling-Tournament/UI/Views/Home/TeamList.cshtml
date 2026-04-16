@@ -1,39 +1,98 @@
-﻿@model List<bowling_tournament_MVCPRoject.UI.ReadModels.RegistrationListItem>
-
+@model List<bowling_tournament_MVCPRoject.UI.ReadModels.TeamListItem>
 @{
 	ViewData["Title"] = "Team List";
 }
 
+<div class="row justify-content-center">
+	<div class="col-lg-10">
+		<h3>Team List</h3>
 
-<div class="text-center justify-content-center row">
-	<h3>The NBCC Bowling League</h3>
-	@if (User.Identity != null && User.Identity.IsAuthenticated)
-	{
-		<p><a class="btn-primary btn" asp-controller="Admin" asp-action="TeamListAdmin">Admin Team Management</a></p>
-	}
-	<div>
-		@foreach (var division in Model.GroupBy(division => division.team.teamDivision))
+		@if (User.Identity != null && User.Identity.IsAuthenticated)
 		{
-			<h4 class="align-middle">@division.Key</h4>
-			<table class="table table-responsive">
-				<thead>
-					<tr>
-						<th>Team</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					@foreach (var registration in Model.Where(t => t.team.teamDivision == division.Key))
-					{
+			<div class="mb-4">
+				<a class="btn btn-primary" asp-controller="Admin" asp-action="Summary">
+					<i class="bi bi-graph-up"></i> View Summary
+				</a>
+			</div>
+		}
+
+		@foreach (var division in Model.GroupBy(t => t.divisionName))
+		{
+			<h4>@division.Key Division</h4>
+			<div class="table-responsive mb-4">
+				<table class="table table-hover">
+					<thead>
 						<tr>
-							<td>@registration.team.teamName</td>
-							<td>
-								<a class="btn-primary btn" asp-action="Details" asp-route-id="@registration.team.id"><i class="bi bi-search"></i> View</a>
-							</td>
+							<th style="width: 40%;">Team Name</th>
+							@if (User.Identity != null && User.Identity.IsAuthenticated)
+							{
+								<th style="width: 15%;">Status</th>
+								<th style="width: 45%;">Actions</th>
+							}
 						</tr>
-					}
-				</tbody>
-			</table>
+					</thead>
+					<tbody>
+						@foreach (var team in division)
+						{
+							<tr>
+								<td class="align-middle fw-500">@team.teamName</td>
+								@if (User.Identity != null && User.Identity.IsAuthenticated)
+								{
+									<td class="align-middle">
+										@if (team.isPaid)
+										{
+											<span class="status-badge status-paid">
+												<i class="bi bi-check-circle-fill"></i> Paid
+											</span>
+										}
+										else
+										{
+											<span class="status-badge status-unpaid">
+												<i class="bi bi-exclamation-circle-fill"></i> Unpaid
+											</span>
+										}
+									</td>
+									<td class="align-middle">
+										<div class="btn-group-compact">
+											<a class="btn btn-sm btn-primary" asp-action="Details" asp-route-id="@team.id" title="View team details">
+												<i class="bi bi-search"></i> Details
+											</a>
+											<a class="btn btn-sm btn-primary" asp-controller="Admin" asp-action="EditTeam" asp-route-id="@team.id" title="Edit team details">
+												<i class="bi bi-pencil"></i> Edit
+											</a>
+											<a class="btn btn-sm btn-primary" asp-controller="Admin" asp-action="RegisterTeam" asp-route-teamId="@team.id" title="Register team for tournament">
+												<i class="bi bi-trophy"></i> Register
+											</a>
+											@if (team.isPaid)
+											{
+												<button class="btn btn-sm btn-primary disabled" title="Team is already marked as paid" disabled>
+													<i class="bi bi-calendar-check"></i> Paid
+												</button>
+											}
+											else
+											{
+												<a class="btn btn-sm btn-success" asp-controller="Admin" asp-action="MarkPaid" asp-route-teamId="@team.id" title="Mark team as paid">
+													<i class="bi bi-calendar-check"></i> Mark Paid
+												</a>
+											}
+											<a class="btn btn-sm btn-danger" asp-controller="Admin" asp-action="DeleteTeam" asp-route-id="@team.id" title="Delete team">
+												<i class="bi bi-trash"></i> Delete
+											</a>
+										</div>
+									</td>
+								}
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		}
+
+		@if (Model.Count == 0)
+		{
+			<div class="alert alert-info mt-4">
+				<i class="bi bi-info-circle"></i> No teams have been registered yet.
+			</div>
 		}
 	</div>
 </div>

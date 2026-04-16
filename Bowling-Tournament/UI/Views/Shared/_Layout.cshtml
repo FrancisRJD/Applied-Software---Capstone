@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
@@ -7,14 +7,15 @@
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 	<link rel="stylesheet" href="~/bowling_tournament_MVCPRoject.styles.css" asp-append-version="true" />
-	@* Add the bootstrap icons *@
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 </head>
 <body>
 	<header>
-		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom">
 			<div class="container-fluid">
-				<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">The NBCC Bowling League</a>
+				<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+					<i class="bi bi-trophy-fill"></i> NBCC Bowling League
+				</a>
 				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
 						aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
@@ -22,49 +23,58 @@
 				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
 					<ul class="navbar-nav flex-grow-1">
 						<li class="nav-item">
-							<a asp-controller="Home" asp-action="Index" class="nav-link text-dark">Home</a>
+							<a asp-controller="Home" asp-action="Index" class="nav-link text-dark">
+								<i class="bi bi-house-fill"></i> Home
+							</a>
 						</li>
 						<li class="nav-item">
-							<a asp-controller="Home" asp-action="TeamList" class="nav-link text-dark">Public Team List</a>
+							<a asp-controller="Home" asp-action="TeamList" class="nav-link text-dark">
+								<i class="bi bi-people-fill"></i> Team List
+							</a>
 						</li>
 						<li class="nav-item">
-							<a asp-controller="Home" asp-action="ViewTournaments" class="nav-link text-dark">Tournament List</a>
+							<a asp-controller="Home" asp-action="ViewTournaments" class="nav-link text-dark">
+								<i class="bi bi-calendar-event-fill"></i> Tournament List
+							</a>
 						</li>
 						<li class="nav-item">
-							<a asp-controller="Team" asp-action="Register" class="nav-link text-dark">Register Team</a>
+							<a asp-controller="Team" asp-action="Register" class="nav-link text-dark">
+								<i class="bi bi-pencil-square"></i> Register Team
+							</a>
 						</li>
 						@if (User.Identity != null && User.Identity.IsAuthenticated)
 						{
 							<li class="nav-item">
-
-								<a asp-controller="Admin" asp-action="TeamRegistrationAdmin" class="nav-link text-dark">Admin Team Registration List</a>
-
-							</li>
-							<li class="nav-item">
-
-								<a asp-controller="Admin" asp-action="TeamListAdmin" class="nav-link text-dark">Admin Team List</a>
-
-							</li>
-							<li class="nav-item">
-								<a asp-controller="Admin" asp-action="CreateTournament" class="nav-link text-dark">Create a Tournament</a>
+								<a asp-controller="Admin" asp-action="CreateTournament" class="nav-link text-dark">
+									<i class="bi bi-plus-circle-fill"></i> Create Tournament
+								</a>
 							</li>
 						}
+					</ul>
+					<ul class="navbar-nav">
 						@if (!User.Identity.IsAuthenticated)
 						{
 							<li class="nav-item">
-								<a asp-controller="Auth" asp-action="Login" class="nav-link text-dark">Admin Login</a>
+								<a asp-controller="Auth" asp-action="Login" class="nav-link text-dark">
+									<i class="bi bi-box-arrow-in-right"></i> Admin Login
+								</a>
 							</li>
 						}
 						@if (User.Identity != null && User.Identity.IsAuthenticated)
 						{
-							<li class="nav-item ms-auto align-items-center">
-
-								<span class="me-2 text-dark">Logged in as @User.Identity.Name!</span>
-
-								<form asp-action="Logout" asp-controller="Auth" method="post" class="d-inline">
-									<button type="submit" class="btn btn-link nav-link p-0">Logout</button>
-								</form>
-
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle text-dark" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+									<i class="bi bi-person-circle"></i> @User.Identity.Name
+								</a>
+								<ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+									<li>
+										<form asp-action="Logout" asp-controller="Auth" method="post" class="dropdown-item" style="cursor: pointer;">
+											<button type="submit" class="btn btn-link p-0 text-decoration-none" style="width: 100%; text-align: left; color: inherit;">
+												<i class="bi bi-box-arrow-right"></i> Logout
+											</button>
+										</form>
+									</li>
+								</ul>
 							</li>
 						}
 					</ul>
@@ -72,17 +82,23 @@
 			</div>
 		</nav>
 	</header>
-	<div class="container">
-		<main role="main" class="pb-3">
-			@* If we want to use Flash posting from bootstrap *@
+	<div class="container-fluid">
+		<main role="main">
 			@await Html.PartialAsync("_Flash")
 			@RenderBody()
 		</main>
 	</div>
 
-	<footer class="border-top footer text-muted">
+	<footer class="footer mt-auto py-3 bg-light">
 		<div class="container">
-			&copy; 2025 - Nicholas Perry, Matthew Pyne, Francis Roney
+			<div class="row">
+				<div class="col-md-6">
+					<span class="text-muted">&copy; 2025 - NBCC Bowling League</span>
+				</div>
+				<div class="col-md-6 text-end">
+					<span class="text-muted text-sm">Created by Nicholas Perry, Matthew Pyne, Francis Roney</span>
+				</div>
+			</div>
 		</div>
 	</footer>
 	<script src="~/lib/jquery/dist/jquery.min.js"></script>

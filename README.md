@@ -1,116 +1,246 @@
-# Project's .gitignore should now function THIS TIME and not be a complete mess! If uneditable files that shouldn't be pushed up to the repo are getting pushed, give me (Francis) a heads up so I can make sure it's ripped out of the repo and added to the .gitignore list!
+# NBCC Bowling League - Application Documentation
 
-## TODO
-### OVERARCHING (Arranged in importance)
-- Add new/updating old features(CRITICAL for Minimum Viable Product)
-	- Needs to be added
-		- View Tournaments
-			- Create button that leads to create tournament form
-			- List of tournaments showing tournament names, watcher capacity, team capacity, and how many teams have registered(And paid?)
-			- Edit button next to each listing to lead to editting tournament
-		- Create Tournament
-			- Simple tournament creation form. User enters in tournament name, date, location, team capacity, and watcher capacity.
-		- Edit Tournament
-			- Similar as above but updates pre-existing tournament based on hidden ID put into the form by tournament list view
-	- Needs to be adjusted
-		- Team Registration Page
-			- Needs work in view and domain to work off of new V2 database and related V2 entities(PlayerV2, TeamV2)
-			- Needs a new field to select which tournament the team is registering for
-			- Note from Francis: When generating a registration, you will first need to create the new team, followed by its players, and then add a new registration)
-		- Admin Team List
-			- Delete and Mark Paid needs to work with new V2 database (Mark paid will now update the new "Registration" table's status instead of the old "Team", as teams no longer have markings for whether they've paid or not)
-			- Needs to list teams from the new database and interact with that instead of the old one
-			- Teams should now display which tournament(s) they're registered to
-		- Team Details
-			- Should now list what tournament(s) the team has registered and paid for
-- Determine whether user authorization should be verified in View or strictly in Domain
-	- Should User.HasClaim() and related calls be moved to Domain?
-- Figure out if the JS black magic Nick added in wwwroot will work with our architectural standards/new features
-	- Likely fine? Seems perfectly in line with view responsibilities (Shapes player registration data, doesn't apply business rules). Nothing seems to jump out at me as a potential issue.
-- Refactor project so it follows current architectural rules (Everything resides in view, everything is tightly-coupled)
+## Overview
 
-### VIEW
-- Implement Tournament creation, editting, and view (ADMIN ONLY)
-	- Tournament List
-	- Create Tournament Form
-	- Edit Tournament Form
-- Separate Team list view into a team registration view and a team view
-	- Registration view is mainly for admins to see new registrations, mark payments, change status, etc
-		- Displays from (To-be-added) TeamRegistration table
-		- (Non-critical) Probably should also display team details instead of just team ID (For clarity)
-	- Teams view is mainly public-facing.
-		- Non-admin view should display teams that have PAID status on database
-		- Admin view should display all teams and allow for editting (Admin presumed to be the ultimate arbiter of editting/removing stuff basically)
-- Alter Team List view to only show teams registered to the current selected tournament
-- Refactor controllers to be use result returns from the domain for certain error displays (Anything business rules-related. Unnecessary for "Required" checks and other data-shaping stuff though)
-- (Large chunk of the view has already been done by the MVC project so the grand bulk of the View work is in implementing the new views/altering existing views to account for the fact that we're dealing with *multiple* tournaments now)
+**Created by:** Nicholas Perry, Matthew Pyne, Francis Roney
 
-### DOMAIN
-- Move entities out of Models to make them the Domain's responsibility.
-- Refactor View controllers to decouple persistence and view, and move business rule checks to itself.
-	- Admin Controller
-		- Index
-		- CreateTeam (GET/POST)
-		- EditTeam (GET/POST)
-		- DeleteTeam (GET)
-		- DeleteTeamConfirmed (POST)
-		- UpdatePlayer (POST) - How is this getting called? Seems to be getting editted within Admin>Edit
-		- AddPlayer(GET/POST) - Not actually being used? (Instead using wwwroot javascript magic)
-		- RemovePlayer (POST)
-		- MarkPaid
-		- Summary
-		- TeamListAdmin
-		- DetailsAdmin
-	- Home Controller
-		- TeamList
-		- Details
-		- Register (GET/POST)
-		- RegisterPlayer - Not actually being used? (Probably same as admin variant?)
-- Slated for possible removal (To avoid confusion)
-	- Admin Controller
-		- > AddPlayer (Unless it's being used by js?)
-	- Home Controller
-		- > RegisterPlayer (Unless it's being used by js?)
-- Auth Controller Refactor (Separate from above controller refactors as this is non-critical, but needed eventually)
+---
 
-### PERSISTENCE
-- Update database to follow structure. Make new tables for this instead of altering/updating existing ones so code can gradually migrate to new tables. Make new rebuild DB sql file for this aswell!
-	- Player
-		- Id - Int
-		- TeamId - Int, Foreign Key (Team)
-		- Name - String
-		- Email - String
-		- City - String 
-		- Province - String
-	- Team
-		- Id - Int
-		- Name - String
-		- DivisionId - Int
-		- TournamentId - Int, Foreign Key (Tournament)
-	- Tournament
-		- Id - Int
-		- Name - String
-		- TournamentDate - DateTime
-		- Location - String
-		- TeamCapacity - Int
-		- RegistrationOpen - Bool
-		- TournamentCapcity - Int (For viewer capacity?)
-	- TournamentRegistration
-		- Id - Int
-		- TournamentId - Int, Foreign Key (Tournament)
-		- TeamId - Int, Foreign Key (Team)
-		- Status - ENUM RANGE (0 = Unpaid, 1 = Paid) (For verifying if team has paid or not, for now)
-		- StatusDate - DateTime (Time of status change)
-	- User (Non-critical, but needed)
-		- Id - Int
-		- UserName - String
-		- PasswordHash - String
-		- IsAdmin - Bool
-- Move DbContext out of the Models folder
-- Add Dao(s) for Domain to request read-write from
+## Application Purpose
 
+The NBCC Bowling League application serves three primary functions:
 
-## Git Cmd Notes To Self
-git status - Shows what files are being added, removed, or modified. Doublecheck using this to ensure "Bin", "Obj", "Log", "Build" and other generated non-critical files/folders aren't getting pushed up to the repo!!!
+### 1. **Team Management**
+- Create and manage bowling teams
+- Add players to teams (4 players per team)
+- Edit team details and player information
+- Track team payment status
 
-git rm --cached fileExample.txt - Removes a file from the git repo WITHOUT deleting it from your system. (NOTE that you can actually delete things off the github repo directly by just clicking on the file and going to the "more actions" triple-dot menu button in the top right. Just noting this down just incase.)
+### 2. **Tournament Organization**
+- Create and schedule tournaments
+- Set team and spectator capacity limits
+- Configure division-specific capacity limits
+- Enable/disable team registration periods
+
+### 3. **Registration & Waitlisting**
+- Register teams for tournaments
+- Automatically manage waitlists based on capacity
+- Track payment status
+- Process registration payments
+
+---
+
+## Getting Started
+
+### First Time Access
+
+1. **Navigate to the Application**
+   - Open your web browser and go to the application URL
+   - You'll see the NBCC Bowling League home page
+
+2. **Main Navigation Menu**
+   - **Home** - Returns to the home page
+   - **Team List** - View all registered teams
+   - **Tournament List** - View upcoming tournaments
+   - **Register Team** - Create a new team
+   - **Admin Login** - Access admin features (top right)
+
+---
+
+## User Guide
+
+#### Viewing Teams
+
+1. Navigate to **Team List**
+2. Teams are organized by division:
+   - Men's Division
+   - Women's Division
+   - Mixed Division
+   - Youth Division
+   - Senior Division
+3. Each team displays:
+   - Team name
+   - Payment status (Paid/Unpaid)
+   - Team details link
+
+#### Viewing Team Details
+
+1. Click the **Details** button on any team
+2. View team information including:
+   - Team name and division
+   - Payment status
+   - List of 4 team players with contact information
+
+#### Viewing Tournaments
+
+1. Navigate to **Tournament List**
+2. Tournaments are organized by date (soonest first)
+3. For each tournament, see:
+   - Tournament name and location
+   - Date and time
+   - Division capacity information
+   - Overall team capacity remaining
+4. Click **View** to see tournament details including registered teams
+
+#### Registering a Team
+
+1. Click **Register Team** in the navigation menu
+2. Fill in the team information:
+   - **Team Name** - Name of your bowling team
+   - **Division** - Select your team's division from the dropdown
+3. Add 4 players:
+   - **Player Name** (required)
+   - **Email** (required)
+   - **City** (required)
+   - **Province** (required)
+   - **Phone** (required)
+4. Click **Register Team**
+5. **Important:** Your registration is NOT complete until payment is received
+   - An admin must mark the team as paid
+   - Only paid teams can register for tournaments
+
+#### Viewing Tournament Details
+
+1. From **Tournament List**, click **View** on any tournament
+2. See:
+   - Full tournament information
+   - Registered teams and their status
+   - Waitlisted teams (if applicable)
+   - Division capacity information
+
+---
+
+### Admin Login
+
+1. Click **Admin Login** (top right of navigation)
+2. Enter your credentials:
+   - smonk
+   - password
+3. Click **Sign In**
+
+---
+
+## Tournament Management
+
+### Creating a Tournament
+
+1. Click **Create Tournament** in the navigation menu
+2. Fill in tournament details:
+
+**Basic Information:**
+- **Tournament Name** - e.g., "Spring 2025 Championship"
+- **Tournament Date** - Select from calendar
+- **Location** - e.g., "Downtown Bowling Alley"
+
+**Capacity Settings:**
+- **Max Teams** - Overall team limit for the tournament
+- **Spectator Capacity** - Audience capacity (if applicable)
+
+**Division Capacities:**
+- **Men's Division** - Enter capacity or -1 for unlimited
+- **Women's Division** - Enter capacity or -1 for unlimited
+- **Mixed Division** - Enter capacity or -1 for unlimited
+- **Youth Division** - Enter capacity or -1 for unlimited
+- **Senior Division** - Enter capacity or -1 for unlimited
+
+**Registration:**
+- **Allow Team Registration** - Check to enable team signups
+
+3. Click **Create Tournament**
+
+### Editing a Tournament
+
+1. From **Tournament List**, click **Edit** on the tournament
+2. Modify any tournament settings
+3. Click **Save Changes**
+
+### Deleting a Tournament
+
+1. From **Tournament List**, click **Delete** on the tournament
+2. Review the tournament details
+3. Click **Confirm Deletion** (this cannot be undone)
+4. You'll be redirected to the tournament list
+
+---
+
+## Payment & Registration
+
+### Admin: Team Management
+
+#### View All Teams
+
+1. Teams page shows all registered teams organized by division
+2. Each team displays:
+   - Team name
+   - Payment status (Paid/Unpaid badge)
+   - Action buttons
+
+#### Mark Team as Paid
+
+1. From the **Team List**, find the team
+2. Click **Mark Paid** button
+3. Team payment status updates immediately
+4. Team is now eligible to register for tournaments
+
+#### Edit Team Details
+
+1. Click **Edit** on the team
+2. Modify:
+   - Team name
+   - Division
+3. Click **Save Changes**
+
+#### Edit Team Players
+
+1. Click **Edit** on the team
+2. Click **Edit** or **Remove** on individual players
+3. Add new players by clicking **Add Player**
+4. Fill in player details (all fields required)
+5. Click **Save**
+
+#### Delete a Team
+
+1. Click **Delete** on the team
+2. Review team information
+3. Click **Confirm Deletion** (this cannot be undone)
+
+### Admin: Team Registration
+
+#### Register Team for Tournament
+
+1. Click **Register** on a team
+2. Select the tournament from the dropdown
+3. Click **Register**
+4. Team is automatically:
+   - **Registered** if space available in division and overall capacity
+   - **Waitlisted** if at capacity but interested
+
+**Note:** Only paid teams can register for tournaments
+
+#### View Tournament Registrations
+
+1. From **Tournament List**, click **View** on a tournament
+2. See all registered and waitlisted teams
+3. Click **View Waitlist** to see waitlisted teams
+4. If a registered team cancels, the first waitlisted team from the same division is automatically promoted
+
+#### Cancel Team Registration
+
+1. From **Tournament Details**, click **Cancel** on a registered team
+2. Team is removed from the tournament
+3. If from same division, the first waitlisted team is automatically promoted to registered status
+
+### Payment Tracking
+
+#### View Payment Summary
+
+1. From the navigation menu, click **Team List**
+2. See payment overview table showing:
+   - Division names
+   - Total teams per division
+   - Paid teams per division
+   - Total fees collected
+3. Three summary cards display:
+   - **Total Teams** - All teams registered
+   - **Paid Teams** - Teams that have paid with completion percentage
+   - **Total Revenue** - Total fees collected at $200 per team
