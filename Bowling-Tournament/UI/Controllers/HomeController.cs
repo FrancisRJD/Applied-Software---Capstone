@@ -1,28 +1,30 @@
+using bowling_tournament_MVCPRoject.Domain.Entities;
+using bowling_tournament_MVCPRoject.Domain.Services;
 using bowling_tournament_MVCPRoject.UI.Queries;
+using bowling_tournament_MVCPRoject.UI.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using bowling_tournament_MVCPRoject.Domain.Entities;
 
 namespace bowling_tournament_MVCPRoject.UI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
         private readonly ITeamReadModelGateway _teamGateway;
         private readonly ITournamentReadModelGateway _tournamentGateway;
         private readonly IRegistrationReadModelGateway _registrationGateway;
+        private readonly IUserAuthorizationService _authorizationService;
 
         public HomeController(
-            ILogger<HomeController> logger,
             ITeamReadModelGateway teamGateway,
             ITournamentReadModelGateway tournamentGateway,
-            IRegistrationReadModelGateway registrationGateway
+            IRegistrationReadModelGateway registrationGateway,
+            IUserAuthorizationService authorizationService
             )
         {
-            _logger = logger;
             _teamGateway = teamGateway;
             _tournamentGateway = tournamentGateway;
             _registrationGateway = registrationGateway;
+            _authorizationService = authorizationService;
         }
 
         public IActionResult Index() => View();
@@ -30,18 +32,15 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> TeamList()
         {
-            var teams = await _teamGateway.GetAllTeamRegistrations();
-            var paidTeams = teams.Where(t => t.team.isPaid).ToList();
-            return View(paidTeams);
+            var teams = await _teamGateway.GetAllAsync();
+            return View(teams);
         }
 
         [HttpGet]
         public async Task<IActionResult> Details(int id)
-            //Reminder to self, this is for *team* details
         {
             var team = await _teamGateway.GetByIdAsync(id);
 
-            //To fetch registration data it was intended to be done through the registration gateway/dao stuff, as that's where payment status/dates are at
             var registrations = await _registrationGateway.GetAllPaidAsync();
             var registrationsOfTeam = registrations.Where(r=> r.team.id == id).ToList();
 
@@ -50,7 +49,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
                 TempData["Message"] = $"Team {id} not found.";
                 return RedirectToAction("TeamList");
             }
-            if (registrationsOfTeam.Count == 0 && !User.HasClaim("IsAdmin", "true"))
+            if (registrationsOfTeam.Count == 0 && !_authorizationService.IsAdmin(User))
                 return RedirectToAction("Denied", "Auth");
             return View(team);
         }
@@ -58,7 +57,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> ViewTournaments()
         {
-            var tournaments = await _tournamentGateway.GetAllAsync();
+            var tournaments = await _tournamentGateway.GetAllWithCapacityAsync();
             return View(tournaments);
         }
 
@@ -67,7 +66,19 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         {
             var tournament = await _tournamentGateway.GetByIdAsync(id);
             if (tournament == null) return NotFound();
-            return View(tournament);
+
+            var allRegistrations = await _registrationGateway.GetAllAsync();
+            var tournamentRegistrations = allRegistrations
+                .Where(r => r.tournament.id == id)
+                .ToList();
+
+            var vm = new TournamentDetailsVm
+            {
+                Tournament = tournament,
+                Registrations = tournamentRegistrations
+            };
+
+            return View(vm);
         }
 
         public IActionResult CannotBeFound() => View();

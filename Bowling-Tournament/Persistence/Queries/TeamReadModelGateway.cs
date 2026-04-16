@@ -140,7 +140,10 @@ namespace bowling_tournament_MVCPRoject.Persistence.Queries
                  }
                 ).FirstOrDefaultAsync();
 
-            team.Players = await GetTeamPlayersAsync(team);
+            if (team != null)
+            {
+                team.Players = await GetTeamPlayersAsync(team);
+            }
             return team;
         }
 

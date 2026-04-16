@@ -1,50 +1,87 @@
-﻿@model bowling_tournament_MVCPRoject.UI.ReadModels.TeamListItem
+@model bowling_tournament_MVCPRoject.UI.ReadModels.TeamListItem
 
 @{
     ViewData["Title"] = "Team Details";
 }
-<div class="justify-content-center row">
-	<div class="col-10">
-		<div class="card">
-			<div class="card-header">
-				<h3>@Model.teamName</h3>
-			</div>
-			<div class="card-body">
-				<ul class="list-unstyled">
-					<li>Division: @Model.teamDivision</li>
-					<li>
-                        <h4 class="pt-2">Players:</h4>
 
-                        <table class="table player-table mt-3">
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <h3>Team Details</h3>
+
+        <div class="mb-4">
+            <a class="btn btn-secondary" asp-action="TeamList" asp-controller="Home">
+                <i class="bi bi-arrow-left"></i> Back to Teams
+            </a>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0">@Model.teamName</h5>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-3">Division:</dt>
+                    <dd class="col-sm-9">
+                        <strong>@Model.divisionName</strong>
+                    </dd>
+
+                    <dt class="col-sm-3">Payment Status:</dt>
+                    <dd class="col-sm-9">
+                        @if (Model.isPaid)
+                        {
+                            <span class="status-badge status-paid">
+                                <i class="bi bi-check-circle-fill"></i> Paid
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="status-badge status-unpaid">
+                                <i class="bi bi-exclamation-circle-fill"></i> Unpaid
+                            </span>
+                        }
+                    </dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="bi bi-people"></i> Team Players</h5>
+            </div>
+            <div class="card-body">
+                @if (Model.Players != null && Model.Players.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>City</th>
-                                    <th>Province</th>
-                                    <th>Email</th>
-                                    <th>Phone</th>
+                                    <th style="width: 20%;">Name</th>
+                                    <th style="width: 20%;">Email</th>
+                                    <th style="width: 15%;">City</th>
+                                    <th style="width: 15%;">Province</th>
+                                    <th style="width: 15%;">Phone</th>
                                 </tr>
                             </thead>
-
                             <tbody>
-								@foreach (var player in Model.Players)
+                                @foreach (var player in Model.Players)
                                 {
                                     <tr>
-                                        <td>@player.Name</td>
-                                        <td>@player.City</td>
-                                        <td>@player.Province</td>
-                                        <td>@player.Email</td>
-                                        <td>@player.Phone</td>
+                                        <td class="align-middle fw-500">@player.Name</td>
+                                        <td class="align-middle">@player.Email</td>
+                                        <td class="align-middle">@player.City</td>
+                                        <td class="align-middle">@player.Province</td>
+                                        <td class="align-middle">@player.Phone</td>
                                     </tr>
                                 }
                             </tbody>
                         </table>
-
-					</li>
-				</ul>
-			</div>
-		</div>
-	</div>
-
-
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted mb-0">No players assigned to this team.</p>
+                }
+            </div>
+        </div>
+    </div>
 </div>

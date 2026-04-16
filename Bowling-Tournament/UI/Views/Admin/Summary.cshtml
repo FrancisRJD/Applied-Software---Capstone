@@ -1,28 +1,109 @@
-﻿@using bowling_tournament_MVCPRoject.UI.ViewModels
+@using bowling_tournament_MVCPRoject.UI.ViewModels
 @model IEnumerable<SummaryVM>
 
-<div class="text-center justify-content-center row">
-    <h3 class="align-middle">Summary Page</h3>
-    <a class="btn-primary btn" asp-controller="Admin" asp-action="TeamListAdmin">Admin Team Management</a>
-    <table class="table table-responsive">
-        <thead>
-            <tr>
-                <th>Division</th>
-                <th>Teams</th>
-                <th>Paying Teams</th>
-                <th>Total Fees</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach(SummaryVM division in Model)
-            {
-                <tr>
-                    <td>@division.DivisionName</td>
-                    <td>@division.Teams</td>
-                    <td>@division.PayingTeams</td>
-                    <td>@division.TotalFees</td>
-                </tr>
+@{
+    ViewData["Title"] = "Summary";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <h3>Teams Summary</h3>
+
+        <div class="mb-4">
+            <a class="btn btn-primary" asp-controller="Home" asp-action="TeamList">
+                <i class="bi bi-arrow-left"></i> Back to Teams
+            </a>
+        </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="bi bi-graph-up"></i> Team Payment Overview</h5>
+        </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Division</th>
+                                <th style="width: 20%;" class="text-center">Total Teams</th>
+                                <th style="width: 20%;" class="text-center">Paid Teams</th>
+                                <th style="width: 30%;" class="text-end">Total Fees</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(SummaryVM division in Model)
+                            {
+                                <tr>
+                                    <td class="align-middle fw-500">
+                                        @if (division.DivisionName == "Overall")
+                                        {
+                                            <span class="badge bg-primary">@division.DivisionName</span>
+                                        }
+                                        else
+                                        {
+                                            @division.DivisionName
+                                        }
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        <span class="badge bg-secondary">@division.Teams</span>
+                                    </td>
+                                    <td class="align-middle text-center">
+                                        @if (division.PayingTeams == division.Teams)
+                                        {
+                                            <span class="badge bg-success">@division.PayingTeams / @division.Teams</span>
+                                        }
+                                        else if (division.PayingTeams == 0)
+                                        {
+                                            <span class="badge bg-danger">@division.PayingTeams / @division.Teams</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">@division.PayingTeams / @division.Teams</span>
+                                        }
+                                    </td>
+                                    <td class="align-middle text-end fw-500">
+                                        $@division.TotalFees.ToString("F2")
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            @{
+                var overallData = Model.FirstOrDefault(x => x.DivisionName == "Overall");
+                if (overallData != null)
+                {
+                    <div class="col-md-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h6 class="card-title text-muted">Total Teams</h6>
+                                <h2 class="text-primary">@overallData.Teams</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h6 class="card-title text-muted">Paid Teams</h6>
+                                <h2 class="text-success">@overallData.PayingTeams</h2>
+                                <small class="text-muted">@((overallData.Teams > 0 ? Math.Round((double)overallData.PayingTeams / overallData.Teams * 100, 0) : 0).ToString())% Complete</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h6 class="card-title text-muted">Total Revenue</h6>
+                                <h2 class="text-info">$@overallData.TotalFees.ToString("F2")</h2>
+                            </div>
+                        </div>
+                    </div>
+                }
             }
-        </tbody>
-    </table>
+        </div>
+    </div>
 </div>

@@ -1,8 +1,40 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 @{
+    ViewData["Title"] = "Access Denied";
 }
-<h1>Access Denied</h1>
 
-<p>You do not have permission to perform this action.</p>
+<div class="row justify-content-center align-items-center" style="min-height: calc(100vh - 200px);">
+    <div class="col-md-6 col-lg-5">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white text-center py-4">
+                <h3 class="mb-0">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Access Denied
+                </h3>
+            </div>
+            <div class="card-body p-5 text-center">
+                <p class="lead mb-4">
+                    You do not have permission to perform this action.
+                </p>
+
+                <p class="text-muted mb-4">
+                    This section is restricted to authorized administrators only. If you believe you should have access, please contact an administrator.
+                </p>
+
+                <div class="d-flex gap-2 justify-content-center">
+                    <a href="@Url.Action("Index", "Home")" class="btn btn-primary">
+                        <i class="bi bi-house-fill"></i> Go to Home
+                    </a>
+                    <a href="@Url.Action("Login", "Auth")" class="btn btn-secondary">
+                        <i class="bi bi-box-arrow-in-right"></i> Try Again
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-warning mt-4 text-center" role="alert">
+            <small>
+                <i class="bi bi-info-circle"></i> 
+                If you were recently granted admin access, please try logging out and logging back in.
+            </small>
+        </div>
+    </div>
+</div>

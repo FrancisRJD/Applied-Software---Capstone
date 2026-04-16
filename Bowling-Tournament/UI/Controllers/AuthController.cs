@@ -44,7 +44,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
             };
 
             if (user.IsAdmin)
-                claims.Add(new Claim("IsAdmin", "true"));
+                claims.Add(new Claim(AppConstants.AuthorizationClaims.IS_ADMIN, AppConstants.AuthorizationClaims.ADMIN_VALUE));
 
             var identity = new ClaimsIdentity(claims, "app-cookie");
             var principal = new ClaimsPrincipal(identity);
