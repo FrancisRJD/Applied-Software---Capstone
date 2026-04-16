@@ -83,6 +83,34 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
             return result;
         }
 
+        public TournamentResult tryDeleteTournament(TournamentRequest request)
+        {
+            TournamentResult result = new TournamentResult();
+
+            if (request == null || request.Id <= 0)
+            {
+                result.Errors.Add("A valid tournament ID is required.");
+                result.success = false;
+                return result;
+            }
+
+            Tournament tournament = _tournamentDao.findTournament(
+                new Tournament { TournamentId = request.Id }
+            );
+
+            if (tournament == null || tournament.TournamentId <= 0)
+            {
+                result.Errors.Add("Tournament not found.");
+                result.success = false;
+                return result;
+            }
+
+            _tournamentDao.removeTournament(tournament);
+
+            result.success = true;
+            return result;
+        }
+
         private TournamentResult validateTournamentRequest(TournamentRequest request, bool isUpdate)
         {
             TournamentResult result = new TournamentResult();

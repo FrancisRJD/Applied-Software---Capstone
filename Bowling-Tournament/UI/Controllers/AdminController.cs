@@ -17,22 +17,31 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         private readonly ITeamReadModelGateway _teamGateway;
         private readonly ITournamentReadModelGateway _tournamentGateway;
         private readonly IRegistrationReadModelGateway _registrationGateway;
+        private readonly IUserAuthorizationService _authorizationService;
+        private readonly ISummaryService _summaryService;
+        private readonly IViewModelMapper _viewModelMapper;
 
         public AdminController(
             ITeamManagerService teamService,
             ITournamentService tournamentService,
             ITeamReadModelGateway teamGateway,
             ITournamentReadModelGateway tournamentGateway,
-            IRegistrationReadModelGateway registrationGateway)
+            IRegistrationReadModelGateway registrationGateway,
+            IUserAuthorizationService authorizationService,
+            ISummaryService summaryService,
+            IViewModelMapper viewModelMapper)
         {
             _teamService = teamService;
             _tournamentService = tournamentService;
             _teamGateway = teamGateway;
             _tournamentGateway = tournamentGateway;
             _registrationGateway = registrationGateway;
+            _authorizationService = authorizationService;
+            _summaryService = summaryService;
+            _viewModelMapper = viewModelMapper;
         }
 
-        private bool IsAdmin() => User.HasClaim("IsAdmin", "true");
+        private bool IsAdmin() => _authorizationService.IsAdmin(User);
 
         // TEAM REGISTRATION
         [HttpGet]
@@ -88,6 +97,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> DetailsAdmin(int id)
         {
+            if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
             var team = await _teamGateway.GetByIdAsync(id);
             if (team == null) return NotFound();
             return View("/Ui/Views/Home/Details.cshtml", team);
@@ -98,18 +108,11 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         public async Task<IActionResult> EditTeam(int id)
         {
             if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
-            Console.WriteLine("DEBUG: ID AT VIEW LEVEL IS " + id);
             var team = await _teamGateway.GetByIdAsync(id);
             if (team == null) return NotFound();
 
-            var vm = new TeamEditVm
-            {
-                TeamId = team.id,
-                TeamName = team.teamName,
-                DivisionId = team.teamDivision,
-                DivisionOptions = await _teamGateway.GetDivisionOptionsAsync(),
-                Players = team.Players
-            };
+            var divisionOptions = (await _teamGateway.GetDivisionOptionsAsync()).ToList();
+            var vm = _viewModelMapper.MapTeamToEditVm(team, divisionOptions);
             return View("Edit", vm);
         }
 
@@ -149,8 +152,8 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
             if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
             var result = _teamService.tryDeleteTeam(new TeamRequest(id, "", 0));
             if (!result.success) return NotFound();
-            TempData["Message"] = $"Team {id} deleted.";
-            return RedirectToAction("TeamListAdmin");
+            TempData["Message"] = $"Team deleted.";
+            return RedirectToAction("TeamList", "Home");
         }
 
         //DELETE REGISTRATION
@@ -164,17 +167,14 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
 
             var result = _teamService.tryCancelRegistration(new RegisterTeamRequest(registrationId, teamId, tournamentId));
             if (!result.success) TempData["Message"] = "Something went wrong during cancellation, please try again";
-            else TempData["Message"] = $"Team unregistered from tournament ID {tournamentId}";
-            return RedirectToAction("TeamRegistrationAdmin");
+            else TempData["Message"] = "Team unregistered from tournament";
+            return RedirectToAction("TournamentDetails", "Home", new { id = tournamentId });
         }
 
         [HttpPost]
         public IActionResult DeleteRegistrationConfirmed(int registrationId)
         {
             if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
-
-
-
             return RedirectToAction("TeamRegistrationAdmin");
         }
 
@@ -247,7 +247,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
             var request = new RegisterTeamRequest(0, teamId, 0);
             var result = _teamService.tryMarkPaid(request);
             TempData["Message"] = result.success ? "Team marked as paid." : result.Errors.FirstOrDefault();
-            return RedirectToAction("TeamListAdmin");
+            return RedirectToAction("TeamList", "Home");
         }
 
         // SUMMARY
@@ -256,26 +256,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
         {
             if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
             var teams = await _teamGateway.GetAllAsync();
-            const decimal fee = 200.00m;
-
-            var summary = teams
-                .GroupBy(t => t.divisionName ?? "Unknown")
-                .Select(g => new SummaryVM
-                {
-                    DivisionName = g.Key,
-                    Teams = g.Count(),
-                    PayingTeams = g.Count(t => t.isPaid),
-                    TotalFees = g.Count(t => t.isPaid) * fee
-                }).ToList();
-
-            summary.Add(new SummaryVM
-            {
-                DivisionName = "Overall",
-                Teams = teams.Count,
-                PayingTeams = teams.Count(t => t.isPaid),
-                TotalFees = teams.Count(t => t.isPaid) * fee
-            });
-
+            var summary = _summaryService.CalculateSummary(teams);
             return View(summary);
         }
 
@@ -314,7 +295,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
             }
 
             TempData["Message"] = "Tournament created successfully.";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("ViewTournaments", "Home");
         }
 
         // EDIT TOURNAMENT
@@ -374,6 +355,30 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
             return RedirectToAction("EditTournament", new { id = vm.Id });
         }
 
+        // DELETE TOURNAMENT
+        [HttpGet]
+        public async Task<IActionResult> DeleteTournament(int id)
+        {
+            if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
+            var tournament = await _tournamentGateway.GetByIdAsync(id);
+            if (tournament == null) return NotFound();
+            return View(tournament);
+        }
+
+        [HttpPost]
+        public IActionResult DeleteTournamentConfirmed(int id)
+        {
+            if (!IsAdmin()) return RedirectToAction("Denied", "Auth");
+            var result = _tournamentService.tryDeleteTournament(new TournamentRequest(id, "", 0, DateTime.Now, "", 0, false, 0, 0, 0, 0, 0));
+            if (!result.success)
+            {
+                TempData["Message"] = result.Errors.FirstOrDefault() ?? "Error deleting tournament.";
+                return RedirectToAction("ViewTournaments", "Home");
+            }
+            TempData["Message"] = "Tournament deleted successfully.";
+            return RedirectToAction("ViewTournaments", "Home");
+        }
+
         // REGISTER TEAM FOR TOURNAMENT
         [HttpGet]
         public async Task<IActionResult> RegisterTeam(int teamId)
@@ -405,7 +410,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
                 return View(vm);
             }
             TempData["Message"] = "Team registered for tournament successfully.";
-            return RedirectToAction("TeamRegistrationAdmin");
+            return RedirectToAction("TournamentDetails", "Home", new { id = vm.TournamentId });
         }
 
         [HttpGet]

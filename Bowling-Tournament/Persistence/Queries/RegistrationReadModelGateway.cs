@@ -119,7 +119,7 @@ namespace bowling_tournament_MVCPRoject.Persistence.Queries
                 join te in _db.Team on r.TeamId equals te.TeamId
                 join to in _db.Tournament on r.TournamentId equals to.TournamentId
                 join d in _db.Division on te.TeamDivision equals d.DivisionId into divisionGroup
-                from d in divisionGroup.DefaultIfEmpty()
+                from d in divisionGroup.DefaultIfEmpty(null!)
                 where r.TournamentId == tournamentId && r.Status == RegistrationStatus.Waitlisted
                 orderby r.RegisteredOn ascending
                 select new RegistrationListItem

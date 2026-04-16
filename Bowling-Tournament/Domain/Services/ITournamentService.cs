@@ -9,7 +9,7 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
             //Request contains tournament details minus tournamentID.
         TournamentResult tryUpdateTournament (TournamentRequest request);
             //Request contains tournament details plus tournamentID.
-
-        //I'd add a try tournament delete but that's not strictly necessary yet so this'll do.
+        TournamentResult tryDeleteTournament(TournamentRequest request);
+            //Request contains tournamentID.
     }
 }

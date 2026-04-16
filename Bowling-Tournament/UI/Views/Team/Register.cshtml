@@ -1,61 +1,99 @@
-﻿@model bowling_tournament_MVCPRoject.UI.ViewModels.TeamRegisterVm
+@model bowling_tournament_MVCPRoject.UI.ViewModels.TeamRegisterVm
 @{
     ViewData["Title"] = "Register Team";
 }
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <h3 class="mb-4">Team Registration</h3>
-            <form asp-controller="Team" asp-action="Register" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="TeamName" class="form-label">Team Name</label>
-                    <input asp-for="TeamName" class="form-control" />
-                    <span asp-validation-for="TeamName" class="text-danger"></span>
-                </div>
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <h3>Team Registration</h3>
+        
+        <div class="card">
+            <div class="card-body">
+                <form asp-controller="Team" asp-action="Register" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger mb-3"></div>
 
-                <div class="form-group mb-3">
-                    <label asp-for="DivisionId" class="form-label">Division</label>
-                    <select asp-for="DivisionId" asp-items="Model.DivisionOptions" class="form-select">
-                        <option value="">-- Select Division --</option>
-                    </select>
-                    <span asp-validation-for="DivisionId" class="text-danger"></span>
-                </div>
-
-                <h4 class="mt-4 mb-3">Players</h4>
-                @for (int i = 0; i < Model.Players.Count; i++)
-                {
-                    <div class="card mb-3">
-                        <div class="card-header">Player @(i + 1)</div>
-                        <div class="card-body">
-                            <div class="mb-2">
-                                <label class="form-label">Name</label>
-                                <input asp-for="Players[i].PlayerName" class="form-control" />
-                                <span asp-validation-for="Players[i].PlayerName" class="text-danger"></span>
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label asp-for="TeamName" class="form-label fw-500">Team Name</label>
+                                <input asp-for="TeamName" class="form-control form-control-lg" placeholder="Enter your team name" />
+                                <span asp-validation-for="TeamName" class="text-danger small"></span>
                             </div>
-                            <div class="mb-2">
-                                <label class="form-label">City</label>
-                                <input asp-for="Players[i].City" class="form-control" />
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label">Province</label>
-                                <input asp-for="Players[i].Province" class="form-control" />
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label">Email</label>
-                                <input asp-for="Players[i].Email" class="form-control" />
-                            </div>
-                            <div class="mb-2">
-                                <label class="form-label">Phone</label>
-                                <input asp-for="Players[i].Phone" class="form-control" />
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label asp-for="DivisionId" class="form-label fw-500">Division</label>
+                                <select asp-for="DivisionId" asp-items="Model.DivisionOptions" class="form-select form-select-lg">
+                                    <option value="">-- Select Division --</option>
+                                </select>
+                                <span asp-validation-for="DivisionId" class="text-danger small"></span>
                             </div>
                         </div>
                     </div>
-                }
 
-                <button type="submit" class="btn btn-success w-100">Submit Team Registration</button>
-            </form>
+                    <h5 class="mb-3"><i class="bi bi-people"></i> Players (Exactly 4 Required)</h5>
+
+                    @for (int i = 0; i < Model.Players.Count; i++)
+                    {
+                        <div class="card mb-3 border-light">
+                            <div class="card-header bg-light">
+                                <strong>Player @(i + 1)</strong>
+                                <span class="float-end text-muted small">@(i + 1) of @Model.Players.Count</span>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-500">Full Name *</label>
+                                            <input asp-for="Players[i].PlayerName" class="form-control" placeholder="Player name" />
+                                            <span asp-validation-for="Players[i].PlayerName" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-500">Email *</label>
+                                            <input asp-for="Players[i].Email" class="form-control" type="email" placeholder="player@example.com" />
+                                            <span asp-validation-for="Players[i].Email" class="text-danger small"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-500">City</label>
+                                            <input asp-for="Players[i].City" class="form-control" placeholder="City" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-500">Province</label>
+                                            <input asp-for="Players[i].Province" class="form-control" placeholder="Province" />
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="mb-3">
+                                            <label class="form-label fw-500">Phone</label>
+                                            <input asp-for="Players[i].Phone" class="form-control" placeholder="Phone number" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="alert alert-info mb-4">
+                        <i class="bi bi-info-circle"></i> <strong>Important:</strong> All player information must be complete before submitting. Your registration will be finalized once payment is received.
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-success btn-lg flex-grow-1">
+                            <i class="bi bi-check-circle"></i> Submit Team Registration
+                        </button>
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

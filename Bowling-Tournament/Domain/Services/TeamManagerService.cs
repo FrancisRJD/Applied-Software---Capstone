@@ -347,15 +347,15 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
         {
             switch (divisionId)
             {
-                case 1:
+                case AppConstants.DivisionIds.MEN:
                     return tournament.MensCapacity;
-                case 2:
+                case AppConstants.DivisionIds.WOMEN:
                     return tournament.WomensCapacity;
-                case 3:
+                case AppConstants.DivisionIds.MIXED:
                     return tournament.MixedCapacity;
-                case 4:
+                case AppConstants.DivisionIds.YOUTH:
                     return tournament.YouthCapacity;
-                case 5:
+                case AppConstants.DivisionIds.SENIOR:
                     return tournament.SeniorCapacity;
                 default:
                     return -1;

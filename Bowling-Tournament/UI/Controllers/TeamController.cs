@@ -83,7 +83,7 @@ namespace bowling_tournament_MVCPRoject.UI.Controllers
             }
 
             TempData["Message"] = "Team registered successfully. Your registration will be complete once payment is received.";
-            return View(vm);
+            return RedirectToAction("TeamList", "Home");
         }
 
         public async Task<IActionResult> Paid()
