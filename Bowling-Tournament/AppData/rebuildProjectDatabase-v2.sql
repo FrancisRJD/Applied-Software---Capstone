@@ -1,7 +1,7 @@
 BEGIN TRANSACTION;
 
 /*
-	In the process of re-making this SQL rebuild file, but currently will 
+	In the process of re-making this SQL rebuild file
 */
 
 DROP TABLE IF EXISTS Player;
@@ -52,6 +52,11 @@ CREATE TABLE "Tournament" (
 	"TeamCapacity"	INTEGER NOT NULL,
 	"WatcherCapacity"	INTEGER NOT NULL,
 	"RegistrationOpen"	INTEGER NOT NULL CHECK("RegistrationOpen" IN (0, 1)),
+	"MensCapacity"	INTEGER DEFAULT -1,
+	"WomensCapacity"	INTEGER DEFAULT -1,
+	"MixedCapacity"	INTEGER DEFAULT -1,
+	"YouthCapacity"	INTEGER DEFAULT -1,
+	"SeniorCapacity"	INTEGER DEFAULT -1,
 	PRIMARY KEY("TournamentId")
 );
 
@@ -69,16 +74,6 @@ CREATE TABLE "BowlingUser" (
 	PRIMARY KEY("UserId")
 );
 
-CREATE TABLE "DivisionCapacity" (
-	"CapacityId"	INTEGER,
-	"TournamentId"	INTEGER NOT NULL,
-	"DivisionId"	INTEGER NOT NULL,
-	"Capacity"	INTEGER NOT NULL,
-	PRIMARY KEY("CapacityId"),
-	FOREIGN KEY("DivisionId") REFERENCES "Division"("DivisionId") ON DELETE CASCADE,
-	FOREIGN KEY("TournamentId") REFERENCES "Tournament"("TournamentId") ON DELETE CASCADE
-);
-
 CREATE INDEX "IX_Registration_TournamentId" ON "Registration" (
 	"TournamentId"
 );
@@ -91,6 +86,48 @@ INSERT INTO Division VALUES (2, 'Womens');
 INSERT INTO Division VALUES (3, 'Mixed');
 INSERT INTO Division VALUES (4, 'Youth');
 INSERT INTO Division VALUES (5, 'Senior');
+
+insert into Team values (1, 'Holy Rollers', 4, 1, '2026-03-28 20:14:48.7507332');
+insert into Team values (2, 'Jesus Take the Ball', 1, 1, '2026-03-28 20:14:48.7507332');
+insert into Team values (3, 'Spare Disciples', 2, 0, '2026-03-28 20:14:48.7507332');
+insert into Team values (4, 'Our Father Who Art in the Gutter', 1, 1, '2026-03-28 20:14:48.7507332');
+insert into Team values (5, 'Let There Be Strikes', 4, 1, '2026-03-28 20:14:48.7507332');
+insert into Team values (6, 'Split Happens', 1, 1, '2026-03-28 20:14:48.7507332');
+insert into Team values (7, 'Strike Force', 3, 1, '2026-03-28 20:14:48.7507332');
+
+insert into Player values (1, 1, 'Andrew BowlsAlot', 'Calgary', 'MB', 'andrewbowls@gmail.com', '506-199-1123');
+insert into Player values (2, 1, 'Larry BowlSumTime', 'Toronto', 'ON', 'larry.bowls@gmail.com', '506-223-8733');
+insert into Player values (3, 1, 'Jerry Bowloften', 'Ottawa', 'ON', 'jerry.bowls@gmail.com', '506-321-1121');
+insert into Player values (4, 1, 'Jimmy NevaBowl', 'Ottawa', 'ON', 'jimmy.bowls@gmail.com', '506-099-1102');
+insert into Player values (5, 2, 'McLovin', 'Saint John', 'NB', 'McLovin@gmail.com', '506-430-9320');
+insert into Player values (6, 2, 'Judy BowlOnce', 'Regina', 'SK', 'JudyBowl@hotmail.com', '506-688-3900');
+insert into Player values (7, 2, 'Elijah McBowl', 'Halifax', 'NS', 'elijah.mcbowl@gmail.com', '506-211-9939');
+insert into Player values (8, 2, 'Noah mcStrike', 'Saint John', 'NB', 'noah.mcstrike@gmail.com', '506-112-7654');
+insert into Player values (9, 3, 'Pierre Le Pin', 'Truro', 'NS', 'pierre.lepin@gmail.com', '506-910-8211');
+insert into Player values (10, 3, 'Olivier Pin-tois', 'Wolfville', 'NS', 'olivier.pintois@gmail.com', '506-918-6622');
+insert into Player values (11, 3, 'Claude le Guttereur', 'Woodstock', 'NB', 'claude.guttereur@gmail.com', '321-500-9921');
+insert into Player values (12, 3, 'David de la Split', 'Saint John', 'NB', 'david.split@gmail.com', '322-493-1992');
+insert into Player values (13, 4, 'Jacques Sparereau', 'Rothesay', 'NB', 'jacques.sparereau@gmail.com', '506-882-9011');
+insert into Player values (14, 4, 'Rene Deux-Pins', 'Quebec CIty', 'QC', 'rene.deuxpins@gmail.com', '506-221-8811');
+insert into Player values (15, 4, 'Yves Split-iere', 'Montreal', 'QC', 'yves.splitiere@gmail.com', '506-777-7727');
+insert into Player values (16, 4, 'Jacques Le Holy Roller', 'Saint John', 'NB', 'jacques.holyroller@gmail.com', '506-221-2002');
+insert into Player values (17, 5, 'Jean-Paul Pinsson', 'Montreal', 'QC', 'jeanpaul.pinsson@gmail.com', '506-110-2084');
+insert into Player values (18, 5, 'Gerard Brie-son', 'Montreal', 'QC', 'gerard.brieson@gmail.com', '506-124-8867');
+insert into Player values (19, 5, 'Jimmy Spares', 'Saint John', 'NB', 'jimmy.spares@gmail.com', '506-676-7676');
+insert into Player values (20, 5, 'Liam Strikes', 'Saint John', 'NB', 'liam.strikes@gmail.com', '506-888-8828');
+insert into Player values (21, 6, 'Pinhead Larry', 'Bikini Bottom', 'OC', 'pinheadlarry@gmail.com', '506-922-1597');
+insert into Player values (22, 6, 'Morgan Brown', 'Saint John', 'NB', 'morgan.brown180@outlook.com', '506-324-2451');
+insert into Player values (23, 6, 'Devon Wilson', 'Oromocto', 'NB', 'devon.wilson477@gmail.com', '506-288-7026');
+insert into Player values (24, 6, 'Jamie Brown', 'Fredericton', 'NB', 'jamie.brown700@gmail.com', '506-226-1284');
+insert into Player values (25, 7, 'Riley Brown', 'Oromocto', 'NB', 'riley.brown651@hotmail.com', '506-999-6650');
+insert into Player values (26, 7, 'Alex Thomas', 'Moncton', 'NB', 'alex.thomas901@outlook.com', '506-459-3363');
+insert into Player values (27, 7, 'Morgan Jones', 'Saint John', 'NB', 'morgan.jones379@outlook.com', '506-689-1550');
+insert into Player values (28, 7, 'Riley Thomas', 'Bathurst', 'NB', 'thomas276@hotmail.com', '506-432-6663');
+
+insert into Tournament values(1, 'The Original Tourney', '2026-08-30', 'Somewhere', 10, 12500, 1, -1, -1, -1, -1, -1);
+insert into Tournament values(2, 'Tournament of Power', '2015-07-05', 'Null Realm', 8, 2, 1, -1, -1, -1, -1, -1);
+insert into Tournament values(3, 'LowCapTournamentTest', '2222-02-02 00:00:00', 'Null', 1, 0, 1, -1, -1, -1, -1, -1);
+insert into Tournament values(4, 'Test Tournament With Capacities', '3000-05-08 00:00:00', 'Somewhere', 4, 12, 1, 2, 2, 2, 2, 2);
 
 COMMIT;
 --NOT UPDATED FOR NEW DATABASE STRUCTURE, DO NOT COPY BELOW

@@ -147,9 +147,6 @@ namespace bowling_tournament_MVCPRoject.Domain.Services
         }
 
         public RegisterTeamResult tryRegisterTeam(RegisterTeamRequest request)
-            //Doesn't stop unpaying teams from registering somehow? [FIXED]
-            //Blocks double-registration but error message given is incorrect [FIXED-ISH]
-            //Prevents tournament exceeding capacity only sometimes somehow?
         {
             var result = new RegisterTeamResult();
 
